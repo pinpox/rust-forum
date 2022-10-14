@@ -1,0 +1,8 @@
+CREATE TABLE users (
+  id INTEGER NOT NULL PRIMARY KEY,
+  name TEXT NOT NULL,
+  about TEXT NOT NULL,
+  picture TEXT NOT NULL,
+  password TEXT NOT NULL,
+  is_admin BOOLEAN NOT NULL DEFAULT FALSE
+)
