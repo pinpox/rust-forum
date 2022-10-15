@@ -1,1 +1,12 @@
 User List Template:
+{% for user in users %}
+  {{loop.index}}
+  --------
+  {{user.id}}
+  {{user.name}}
+  {{user.about}}
+  {{user.password}}
+  {{user.picture}}
+  {{user.is_admin}}
+
+{% endfor %}
