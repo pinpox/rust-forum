@@ -1,5 +1,7 @@
 use diesel::prelude::*;
-#[derive(Queryable)]
+use serde::{Serialize, Deserialize};
+
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct Forum {
     pub id: u64,
     pub name: String,
