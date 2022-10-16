@@ -29,8 +29,6 @@ pub fn user_list_rt() -> Template {
     let mut context = HashMap::new();
     context.insert("users", &users);
 
-    // let context = nil context();
-    // Template::render("user-list.tera", &context)
     Template::render("user-list", &context)
 }
 
@@ -49,12 +47,12 @@ pub fn info_user_rt(id: String) -> String {
     format!("Info for user {}", id)
 }
 
-#[put("/<id>")]
+#[post("/update/<id>")]
 pub fn update_user_rt(id: String) -> String {
     format!("Update info for user {}", id)
 }
 
-#[delete("/<id>")]
+#[get("/delete/<id>")]
 pub fn delete_user_rt(id: String) -> String {
     format!("Delete user {}", id)
 }

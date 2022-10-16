@@ -1,12 +1,31 @@
-User List Template:
-{% for user in users %}
-  {{loop.index}}
-  --------
-  {{user.id}}
-  {{user.name}}
-  {{user.about}}
-  {{user.password}}
-  {{user.picture}}
-  {{user.is_admin}}
-
-{% endfor %}
+<!DOCTYPE html>
+<html lang="en">
+		<head>
+				<title>Users</title>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1">
+				<link href="/static/style.css" rel="stylesheet">
+		</head>
+		<body>
+				<table>
+						<thead>
+								<tr>
+										<th>ID</th>
+										<th>Name</th>
+										<th>Admin</th>
+										<th></th>
+								</tr>
+						</thead>
+						<tbody>
+								{% for user in users %}
+								<tr>
+										<td>{{user.id}}</td>
+										<td>{{user.name}}</td>
+										<td>{{user.is_admin}}</td>
+										<td><a href="/users/delete/{{user.id}}">Delete</a></td>
+								</tr>
+								{% endfor %}
+						</tbody>
+				</table>
+		</body>
+</html>

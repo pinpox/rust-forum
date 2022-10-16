@@ -68,5 +68,5 @@ pub fn rocket_builder() -> rocket::Rocket {
                 routes::post::delete_post_rt
             ],
         )
-        .mount("/files", StaticFiles::from("static/"))
+        .mount("/static", StaticFiles::from("static/"))
 }
