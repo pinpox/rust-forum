@@ -1,6 +1,7 @@
 use diesel::prelude::*;
 use chrono::{DateTime, Utc};
-#[derive(Queryable)]
+use serde::{Serialize, Deserialize};
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct Topic {
     pub id: u64,
     pub board_id: u64,

@@ -9,6 +9,7 @@ use rocket_contrib::templates::Template;
 
 pub mod models;
 pub mod schema;
+pub mod db;
 
 mod routes;
 

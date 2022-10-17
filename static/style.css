@@ -3,22 +3,35 @@ body {
 	margin: auto;
 	padding: 5px;
 	font: 16px/1.4 system-ui, sans-serif;
-	background-color: mintcream;
+	color: mintcream;
+
+	background-color:#222831;
 }
 
 table {
 	border-collapse: collapse;
 	border: 1px solid;
 	width: 100%;
+	background-color:#222831;
 }
 tr, td, th {
 	vertical-align: top;
-	border: 1px solid;
+	border: 1px solid mintcream;
 	padding: .5em;
 }
-thead {
-	background-color: paleturquoise;
+
+
+th {
+	/* background-color: paleturquoise; */
+	background-color: Aquamarine;
+	color:#222831;
 }
 tbody {
-	background-color: white;
+	background-color:#222831;
+}
+
+tr > .forum {
+	background-color: khaki;
+	color:#222831;
+
 }

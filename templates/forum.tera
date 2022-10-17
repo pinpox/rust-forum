@@ -7,18 +7,18 @@
 				<link href="/static/style.css" rel="stylesheet">
 		</head>
 		<body>
-				<h1>Forums</h1>
+								{% for forum in forums %}
+				<h1>{{forum.name}}</h1>
 				<table>
 						<thead>
 								<tr>
-										<th>ID</th>
+										<th>Board</th>
 										<th>Topics</th>
 										<th>Posts</th>
 										<th>Updated</th>
 								</tr>
 						</thead>
 						<tbody>
-								{% for forum in forums %}
 								<tr>
 										<td class="forum" colspan="4">
 												<a href="/forums/{{forum.id}}">{{forum.name}}</a>
@@ -37,8 +37,8 @@
 								</tr>
 								{% endif %}
 								{% endfor %}
-								{% endfor %}
 						</tbody>
 				</table>
+								{% endfor %}
 		</body>
 </html>
