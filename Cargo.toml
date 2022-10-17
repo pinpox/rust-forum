@@ -7,10 +7,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-chrono = { version = "0.4.22", features = ["serde"] }
-rocket = "0.4.5"
+chrono = { version = "0.4.11", features = ["serde"] }
+rocket = "0.4.0"
 rocket_contrib = { version = "0.4.11", features = ["helmet", "tera_templates"] }
-diesel = { version = "2.0.0", features = ["sqlite"] }
+diesel = { version = "2.0.2", features = ["sqlite", "chrono"] }
 dotenvy = "0.15"
 
 serde = { version = "1.0", features = ["derive"] }

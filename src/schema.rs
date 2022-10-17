@@ -1,6 +1,18 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    boards (id) {
+        id -> Integer,
+        forum_id -> Integer,
+        name -> Text,
+        description -> Text,
+        updated_at -> Timestamp,
+        position -> Integer,
+        is_locked -> Bool,
+    }
+}
+
+diesel::table! {
     forums (id) {
         id -> Integer,
         name -> Text,
@@ -28,7 +40,7 @@ diesel::table! {
         subject -> Text,
         is_sticky -> Bool,
         is_locked -> Bool,
-        created_at -> Integer,
+        created_at -> Timestamp,
     }
 }
 
@@ -44,6 +56,7 @@ diesel::table! {
 }
 
 diesel::allow_tables_to_appear_in_same_query!(
+    boards,
     forums,
     posts,
     topics,

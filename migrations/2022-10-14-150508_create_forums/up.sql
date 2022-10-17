@@ -1,7 +1,7 @@
 -- Your SQL goes here
-CREATE TABLE forums(
+CREATE TABLE forums (
   id INTEGER NOT NULL PRIMARY KEY,
-  name TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
   position INTEGER NOT NULL,
   is_locked BOOLEAN NOT NULL DEFAULT FALSE
 )

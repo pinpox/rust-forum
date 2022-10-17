@@ -1,6 +1,9 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #![allow(unused_attributes)]
 
+
+#[macro_use] extern crate rocket;
+
 #[macro_use]
 use rocket::*;
 use rocket_contrib::helmet::SpaceHelmet;
@@ -23,6 +26,7 @@ pub fn rocket_builder() -> rocket::Rocket {
             routes![
                 routes::user::user_list_rt,
                 routes::user::new_user_rt,
+                // routes::user::create_user_rt,
                 routes::user::info_user_rt,
                 routes::user::update_user_rt,
                 routes::user::delete_user_rt
@@ -33,6 +37,7 @@ pub fn rocket_builder() -> rocket::Rocket {
             routes![
                 routes::forum::forum_list_rt,
                 routes::forum::new_forum_rt,
+                routes::forum::create_forum_rt,
                 routes::forum::info_forum_rt,
                 routes::forum::update_forum_rt,
                 routes::forum::delete_forum_rt
@@ -43,6 +48,7 @@ pub fn rocket_builder() -> rocket::Rocket {
             routes![
                 routes::board::board_list_rt,
                 routes::board::new_board_rt,
+                // routes::user::create_board_rt,
                 routes::board::info_board_rt,
                 routes::board::update_board_rt,
                 routes::board::delete_board_rt
@@ -53,6 +59,7 @@ pub fn rocket_builder() -> rocket::Rocket {
             routes![
                 routes::topic::topic_list_rt,
                 routes::topic::new_topic_rt,
+                // routes::user::create_topic_rt,
                 routes::topic::info_topic_rt,
                 routes::topic::update_topic_rt,
                 routes::topic::delete_topic_rt
