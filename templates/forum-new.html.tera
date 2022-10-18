@@ -1,26 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-		<head>
-				<title>New Forum</title>
-				<meta charset="UTF-8">
-				<meta name="viewport" content="width=device-width, initial-scale=1">
-				<link href="/static/style.css" rel="stylesheet">
-		</head>
-		<body>
-				<h1>New Forum</h1>
+{% extends "base" %}
+{% block title %}New Forum{% endblock title %}
+{% block extra_data %} {% set current_page = "admin" %} {% endblock %}
+{% block content %}
+<h1>New Forum</h1>
 
-				{% if message %} <span> {{ message }} </span> {% endif %}
+{% if message %} <span> {{ message }} </span> {% endif %}
 
-				<form action="/forums" method="post">
-						<label for="name">Name:</label><br>
-						<input type="text" id="name" name="name"><br>
+<form action="/forums" method="post">
+		<label for="name">Name:</label><br>
+		<input type="text" id="name" name="name"><br>
 
-						<label for="position">Position:</label><br>
-						<input type="number" id="position" name="position"><br>
+		<label for="position">Position:</label><br>
+		<input type="number" id="position" name="position"><br>
 
-						<label for="locked">Locked:</label><br>
-						<input type="checkbox" id="locked" name="locked">
-						<button type="submit">Submit</button>
-				</form>
-		</body>
-</html>
+		<label for="locked">Locked:</label><br>
+		<input type="checkbox" id="locked" name="locked">
+		<button type="submit">Submit</button>
+</form>
+{% endblock content %}

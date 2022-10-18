@@ -1,0 +1,17 @@
+{% import "macros" as macros %}
+<!DOCTYPE html>
+<html lang="en">
+		<head>
+				{% block head %}
+				<link href="/static/style.css" rel="stylesheet">
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1">
+				<title>{% block title %}{% endblock title %}</title>
+				{% endblock head %}
+		</head>
+		<body>
+				{% block extra_data %}{% endblock %}
+				{{ macros::header(current=current_page) }}
+				{% block content %}{% endblock content %}
+		</body>
+</html>

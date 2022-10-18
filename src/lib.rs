@@ -86,5 +86,12 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
                 routes::post::delete_post_rt
             ],
         )
+
+        .mount(
+            "/admin",
+            routes![
+                routes::admin::manage_rt,
+            ],
+        )
         .mount("/static", FileServer::from("static/"))
 }

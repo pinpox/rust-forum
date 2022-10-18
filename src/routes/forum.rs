@@ -17,7 +17,6 @@ pub fn create_forum_rt(data: rocket::form::Result<Form<NewForum>>) -> Template {
                 .iter()
                 .map(|e| format!("{}", e.name.as_ref().expect(", ")))
                 .collect();
-            println!("the rerrors {:#?}", errs.join("-"));
             return Template::render(
                 "forum-new",
                 json!({ "message": format!("Invalid values entered for: {}", errs.join(", ")) }),

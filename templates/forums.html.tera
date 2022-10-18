@@ -1,44 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-		<head>
-				<title>Users</title>
-				<meta charset="UTF-8">
-				<meta name="viewport" content="width=device-width, initial-scale=1">
-				<link href="/static/style.css" rel="stylesheet">
-		</head>
-		<body>
-				<h1>Forums</h1>
-				<table>
-						<thead>
-								<tr>
-										<th>ID</th>
-										<th>Topics</th>
-										<th>Posts</th>
-										<th>Updated</th>
-								</tr>
-						</thead>
-						<tbody>
-								{% for forum in forums %}
-								<tr>
-										<td class="forum" colspan="4">
-												<a href="/forums/{{forum.id}}">{{forum.name}}</a>
-										</td>
-								</tr>
-								{% for board in boards %}
-								{% if board.forum_id == forum.id %}
-								<tr>
-										<td colspan="grow">
-												<a href="/boards/{{board.id}}">{{board.name}}</a><br>
-												{{board.description}}
-										</td>
-										<td class="center">0</td>
-										<td class="center">0</td>
-										<td class="center">{{board.updated_at}}</td>
-								</tr>
-								{% endif %}
-								{% endfor %}
-								{% endfor %}
-						</tbody>
-				</table>
-		</body>
-</html>
+{% extends "base" %}
+{% block title %}Home{% endblock title %}
+{% block extra_data %} {% set current_page = "home" %} {% endblock %}
+{% block content %}
+<h1>Forums</h1>
+<table>
+		<thead>
+				<tr>
+						<th>ID</th>
+						<th>Topics</th>
+						<th>Posts</th>
+						<th>Updated</th>
+				</tr>
+		</thead>
+		<tbody>
+				{% for forum in forums %}
+				<tr>
+						<td class="forum" colspan="4">
+								<a href="/forums/{{forum.id}}">{{forum.name}}</a>
+						</td>
+				</tr>
+				{% for board in boards %}
+				{% if board.forum_id == forum.id %}
+				<tr>
+						<td colspan="grow">
+								<a href="/boards/{{board.id}}">{{board.name}}</a><br>
+								{{board.description}}
+						</td>
+						<td class="center">0</td>
+						<td class="center">0</td>
+						<td class="center">{{board.updated_at}}</td>
+				</tr>
+				{% endif %}
+				{% endfor %}
+				{% endfor %}
+		</tbody>
+</table>
+{% endblock content %}

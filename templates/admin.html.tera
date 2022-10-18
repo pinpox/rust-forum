@@ -1,0 +1,13 @@
+{% extends "base" %}
+{% block title %}Admin{% endblock title %}
+{% block extra_data %}
+{% set current_page = "admin" %}
+{% endblock %}
+{% block content %}
+<h1>Admin</h1>
+<ul>
+		<li>Manage Forums</li>
+		<li>Manage Boards</li>
+		<li>Manage Users</li>
+</ul>
+{% endblock content %}

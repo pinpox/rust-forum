@@ -35,3 +35,9 @@ tr > .forum {
 	color:#222831;
 
 }
+
+nav > ul {
+    list-style-type: none;
+}
+
+nav > ul > li { display: inline-block; }

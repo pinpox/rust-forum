@@ -11,7 +11,7 @@ use crate::schema::forums;
 #[derive(Debug, Insertable, FromForm)]
 #[diesel(table_name = forums)]
 pub struct NewForum {
-    #[field(validate = len(1..))]
+    #[field(validate = len(2..))]
     pub name: String,
     #[field(default = 0)]
     pub position: i32,
