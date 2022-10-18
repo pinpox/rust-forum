@@ -6,9 +6,9 @@
 
 #[macro_use]
 use rocket::*;
-use rocket_contrib::helmet::SpaceHelmet;
-use rocket_contrib::serve::StaticFiles;
-use rocket_contrib::templates::Template;
+// use rocket_contrib::helmet::SpaceHelmet;
+use rocket::fs::FileServer;
+use rocket_dyn_templates::Template;
 
 pub mod models;
 pub mod schema;
@@ -17,18 +17,18 @@ pub mod db;
 mod routes;
 
 
-use rocket::Request;
 
 // #[catch(422)]
 // fn not_parsable(req: &Request) {
 //     println!("{:#?}", req);
 // }
 
-pub fn rocket_builder() -> rocket::Rocket {
-    rocket::ignite()
+#[launch]
+pub fn rocket_builder() -> rocket::Rocket<Build> {
+    rocket::build()
         // .register(catchers![not_parsable])
         .attach(Template::fairing())
-        .attach(SpaceHelmet::default())
+        // .attach(SpaceHelmet::default())
         .mount("/ping", routes![routes::ping::ping_fn])
         .mount("/", routes![routes::forum::forum_list_rt])
         .mount(
@@ -86,5 +86,5 @@ pub fn rocket_builder() -> rocket::Rocket {
                 routes::post::delete_post_rt
             ],
         )
-        .mount("/static", StaticFiles::from("static/"))
+        .mount("/static", FileServer::from("static/"))
 }

@@ -1,8 +1,9 @@
 use vpub_rust::rocket_builder;
 
 
-
-fn main() {
-    rocket_builder().launch();
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error> {
+    let _rocket = rocket_builder().launch().await?;
+    Ok(())
 }
 

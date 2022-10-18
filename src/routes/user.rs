@@ -1,6 +1,6 @@
 use rocket::*;
 
-use rocket_contrib::templates::Template;
+use rocket_dyn_templates::Template;
 
 use crate::models::user::*;
 use std::collections::HashMap;

@@ -1,12 +1,11 @@
 use crate::models::board::*;
 use crate::models::forum::*;
 use crate::models::topic::*;
-use rocket::*;
-use rocket_contrib::templates::Template;
+// use rocket::*;
+use rocket_dyn_templates::Template;
 use serde::{Deserialize, Serialize};
 
-use rocket::request::Form;
-use std::collections::HashMap;
+use rocket::form::Form;
 
 #[derive(Serialize, Deserialize)]
 struct TemplateData {
