@@ -9,6 +9,8 @@
 		<body>
 				<h1>New Forum</h1>
 
+				{% if message %} <span> {{ message }} </span> {% endif %}
+
 				<form action="/forums" method="post">
 						<label for="name">Name:</label><br>
 						<input type="text" id="name" name="name"><br>

@@ -9,7 +9,6 @@ edition = "2021"
 [dependencies]
 chrono = { version = "0.4.11", features = ["serde"] }
 rocket = "0.5.0-rc.2"
-# rocket_contrib = { version = "0.4.11", features = ["helmet", "tera_templates"] }
 diesel = { version = "2.0.2", features = ["sqlite", "chrono"] }
 dotenvy = "0.15"
 
@@ -23,11 +22,3 @@ serde_json = "1.0"
 version = "0.1.0-rc.2"
 features = ["tera"]
 
-
-
-# rocket_contrib = { features=["tera_templates"] }
-
-# [dependencies.rocket_contrib]
-# # version = "0.4.10"
-# default-features = false
-# features = [ "tera_templates"]
