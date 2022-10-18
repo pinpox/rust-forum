@@ -24,21 +24,33 @@ pub fn create_forum_rt(data: Form<NewForum>) -> Template {
         position: data.position,
         is_locked: data.is_locked,
     };
-    let mut context: HashMap<String, String> = HashMap::new();
+
+
+    let mut data = TemplateData {
+        message: None,
+        boards: vec![],
+        topics: vec![],
+        forums: vec![],
+    };
 
     // TODO show flash message instead of raw error
     match create_forum(new_forum) {
-        Ok(_n) => context.insert("message".to_string(), format!("Forum created")),
-        Err(e) => context.insert("message".to_string(), format!("Failed to create forum: {}", e ))
+        Ok(_n) => data.message = Some("Forum created".to_string()),
+        Err(e) => data.message = Some(format!("Error creating forum: {}", e)),
     };
 
-    Template::render("forum-new", context)
+    Template::render("forum-new", data)
 }
 
 #[get("/new")]
 pub fn new_forum_rt() -> Template {
-    let context: HashMap<String, String> = HashMap::new();
-    Template::render("forum-new", context)
+    let data = TemplateData {
+        message: None,
+        boards: vec![],
+        topics: vec![],
+        forums: vec![],
+    };
+    Template::render("forum-new", data)
 }
 
 #[get("/<id>")]
@@ -92,6 +104,7 @@ pub fn forum_list_rt() -> Template {
         Ok(f) => match get_boards() {
             Err(e) => data.message = Some(e.to_string()),
             Ok(b) => {
+                println!("{:#?}", b);
                 data.boards = b;
                 data.forums = f;
             }

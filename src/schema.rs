@@ -6,7 +6,7 @@ diesel::table! {
         forum_id -> Integer,
         name -> Text,
         description -> Text,
-        updated_at -> Timestamp,
+        updated_at -> Integer,
         position -> Integer,
         is_locked -> Bool,
     }

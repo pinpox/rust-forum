@@ -16,11 +16,21 @@ pub mod db;
 
 mod routes;
 
+
+use rocket::Request;
+
+// #[catch(422)]
+// fn not_parsable(req: &Request) {
+//     println!("{:#?}", req);
+// }
+
 pub fn rocket_builder() -> rocket::Rocket {
     rocket::ignite()
+        // .register(catchers![not_parsable])
         .attach(Template::fairing())
         .attach(SpaceHelmet::default())
-        .mount("/", routes![routes::ping::ping_fn])
+        .mount("/ping", routes![routes::ping::ping_fn])
+        .mount("/", routes![routes::forum::forum_list_rt])
         .mount(
             "/users",
             routes![
@@ -48,7 +58,7 @@ pub fn rocket_builder() -> rocket::Rocket {
             routes![
                 routes::board::board_list_rt,
                 routes::board::new_board_rt,
-                // routes::user::create_board_rt,
+                routes::board::create_board_rt,
                 routes::board::info_board_rt,
                 routes::board::update_board_rt,
                 routes::board::delete_board_rt
