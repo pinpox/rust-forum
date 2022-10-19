@@ -20,23 +20,23 @@ pub struct Topic {
 #[derive(Debug, Insertable, FromForm)]
 #[diesel(table_name = topics)]
 pub struct NewTopic {
-    pub subject: String,
     pub board_id: i32,
+    pub subject: String,
     #[field(default = false)]
     pub is_locked: bool,
     #[field(default = false)]
     pub is_sticky: bool,
+    #[field(default = 0)]
+    pub created_at: i32,
 }
-
-
 
 pub fn create_topic(topic: NewTopic) -> Result<usize, diesel::result::Error> {
     println!("Creating topic: {:?}", topic);
     use crate::schema::topics::dsl::*;
     let mut connection = establish_connection();
 
-
     let new_topic = NewTopic {
+        created_at: topic.created_at,
         subject: topic.subject,
         board_id: topic.board_id,
         is_locked: topic.is_locked,
@@ -48,18 +48,16 @@ pub fn create_topic(topic: NewTopic) -> Result<usize, diesel::result::Error> {
         .execute(&mut connection)
 }
 
-
-
 pub fn get_topic_by_id(f_id: i32) -> Result<Topic, diesel::result::Error> {
     use crate::schema::topics::dsl::*;
     let mut connection = establish_connection();
     topics.find(f_id).first(&mut connection)
 }
 
-// pub fn get_board_topics(b_id: i32) -> Result<Vec<Topic>, diesel::result::Error> {
-//     use crate::schema::topics::dsl::*;
-//     let mut connection = establish_connection();
-//     topics
-//         .filter(board_id.eq(b_id))
-//         .load::<Topic>(&mut connection)
-// }
+pub fn get_board_topics(b_id: i32) -> Result<Vec<Topic>, diesel::result::Error> {
+    use crate::schema::topics::dsl::*;
+    let mut connection = establish_connection();
+    topics
+        .filter(board_id.eq(b_id))
+        .load::<Topic>(&mut connection)
+}

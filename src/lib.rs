@@ -67,7 +67,7 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
             routes![
                 routes::topic::topic_list_rt,
                 routes::topic::new_topic_rt,
-                // routes::user::create_topic_rt,
+                routes::topic::create_topic_rt,
                 routes::topic::info_topic_rt,
                 routes::topic::update_topic_rt,
                 routes::topic::delete_topic_rt

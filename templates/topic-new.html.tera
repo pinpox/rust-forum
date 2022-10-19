@@ -1,0 +1,33 @@
+{% extends "base" %}
+{% block title %}New Topic{% endblock title %}
+{% block extra_data %} {% set current_page = "posts" %} {% endblock %}
+{% block content %}
+<h1>New Topic</h1>
+
+{% if message %} <span> {{ message }} </span> {% endif %}
+
+<form action="/topics" method="post">
+
+	<label for="subject">Subject:</label><br>
+	<input type="text" id="subject" name="subject" value="" autocomplete="off" maxlength="115" required autofocus ><br>
+
+	<label for="content">Content:</label><br>
+	<textarea class="editor" name="content" id="content" required></textarea>
+
+	<label for="is_locked">Locked:</label>
+	<input type="checkbox" id="is_locked" name="is_locked"><br>
+
+	<label for="is_sticky">Sticky:</label>
+	<input type="checkbox" id="is_sticky" name="is_sticky"><br>
+
+	<label for="board_id">Board:</label>
+	<select id="board_id" name="board_id">
+		{% for board in boards %}
+		<option value="{{board.id}}">{{board.name}}</option>
+		{% endfor %}
+	</select>
+
+	<button type="submit">Submit</button>
+</form>
+
+{% endblock content %}

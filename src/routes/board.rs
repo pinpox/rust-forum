@@ -1,5 +1,8 @@
 use crate::models::board::*;
 use crate::models::forum::*;
+use crate::models::topic::*;
+
+
 use rocket_dyn_templates::Template;
 use serde_json::json;
 
@@ -53,9 +56,22 @@ pub fn new_board_rt() -> Template {
 }
 
 #[get("/<id>")]
-pub fn info_board_rt(id: String) -> String {
-    //TODO
-    format!("Info for board {}", id)
+pub fn info_board_rt(id: i32) -> Template {
+    Template::render(
+        "board",
+        match get_board_by_id(id) {
+            Err(e) => json!({"message": e.to_string()}),
+            Ok(b) => match get_board_topics(b.id) {
+                Err(e) => json!({"message": e.to_string()}),
+                Ok(t) => {
+                    json!({
+                        "topics": t,
+                        "board": b
+                    })
+                }
+            },
+        },
+    )
 }
 
 #[put("/<id>")]

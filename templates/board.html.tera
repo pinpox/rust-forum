@@ -1,0 +1,31 @@
+{% extends "base" %}
+{% block title %}{{board.name}}{% endblock title %}
+{% block extra_data %}
+{% set current_page = "posts" %}
+{% endblock %}
+{% block content %}
+<h1>{{board.name}}</h1>
+
+<a href="/topics/new">New Topic</a>
+
+<table>
+	<thead>
+		<tr>
+			<th class="grow">Subject</th>
+			<th>Author</th>
+			<th>Replies</th>
+			<th>Updated</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for topic in topics %}
+		<tr>
+			<td colspan="grow"> <a href="/topics/{{topic.id}}">{{topic.subject}}</a> </td>
+			<td class="center">0</td>
+			<td class="center">0</td>
+			<td class="center"><a href="/boards/6/newest">{{board.updated_at}}</a></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock content %}
