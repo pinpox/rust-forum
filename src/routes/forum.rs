@@ -54,7 +54,7 @@ pub fn info_forum_rt(id: i32) -> Template {
                 Ok(b) => {
                     json!({
                         "boards": b,
-                        "forums": vec![f],
+                        "forum": f,
                     })
                 }
             },

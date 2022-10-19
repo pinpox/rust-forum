@@ -1,44 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-		<head>
-				<title>Users</title>
-				<meta charset="UTF-8">
-				<meta name="viewport" content="width=device-width, initial-scale=1">
-				<link href="/static/style.css" rel="stylesheet">
-		</head>
-		<body>
-								{% for forum in forums %}
-				<h1>{{forum.name}}</h1>
-				<table>
-						<thead>
-								<tr>
-										<th>Board</th>
-										<th>Topics</th>
-										<th>Posts</th>
-										<th>Updated</th>
-								</tr>
-						</thead>
-						<tbody>
-								<tr>
-										<td class="forum" colspan="4">
-												<a href="/forums/{{forum.id}}">{{forum.name}}</a>
-										</td>
-								</tr>
-								{% for board in boards %}
-								{% if board.forum_id == forum.id %}
-								<tr>
-										<td colspan="grow">
-												<a href="/boards/{{board.id}}">{{board.name}}</a><br>
-												{{board.description}}
-										</td>
-										<td class="center">0</td>
-										<td class="center">0</td>
-										<td class="center">{{board.updated_at}}</td>
-								</tr>
-								{% endif %}
-								{% endfor %}
-						</tbody>
-				</table>
-								{% endfor %}
-		</body>
-</html>
+{% extends "base" %}
+{% block title %}{{forum.name}}{% endblock title %}
+{% block extra_data %}
+{% set current_page = "posts" %}
+{% endblock %}
+{% block content %}
+<h1>{{forum.name}}</h1>
+<table>
+	<thead>
+		<tr>
+			<th class="grow">Board</th>
+			<th>Topics</th>
+			<th>Posts</th>
+			<th>Updated</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for board in boards %}
+		<tr>
+			<td colspan="grow">
+				<a href="/boards/{{board.id}}">{{board.name}}</a><br><span>{{board.description}}</span>
+			</td>
+			<td class="center">0</td>
+			<td class="center">0</td>
+			<td class="center"><a href="/boards/6/newest">{{board.updated_at}}</a></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock content %}

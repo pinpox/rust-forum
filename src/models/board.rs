@@ -24,8 +24,11 @@ pub struct NewBoard {
     pub forum_id: i32,
     pub name: String,
     pub description: String,
+    #[field(default = 0)]
     pub updated_at: i32,
+    #[field(default = 0)]
     pub position: i32,
+    #[field(default = false)]
     pub is_locked: bool,
 }
 
@@ -52,15 +55,9 @@ pub fn create_board(board: NewBoard) -> Result<usize, diesel::result::Error> {
         position: board.position,
     };
 
-    println!("Creating board: {:?}", new_board);
-
-    let ins = diesel::insert_into(boards)
+    diesel::insert_into(boards)
         .values(&new_board)
-        .execute(&mut connection);
-
-    println!("{:#?}", ins);
-
-    ins
+        .execute(&mut connection)
 }
 
 pub fn update_board(board: Board) {

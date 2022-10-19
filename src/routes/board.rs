@@ -7,7 +7,6 @@ use rocket::form::Form;
 
 #[post("/", data = "<data>")]
 pub fn create_board_rt(data: rocket::form::Result<Form<NewBoard>>) -> Template {
-
     let new_board = match data {
         Err(errors) => {
             let errs: Vec<String> = errors
@@ -15,7 +14,7 @@ pub fn create_board_rt(data: rocket::form::Result<Form<NewBoard>>) -> Template {
                 .map(|e| format!("{}", e.name.as_ref().expect(", ")))
                 .collect();
             return Template::render(
-                "forum-new",
+                "board-new",
                 json!({ "message": format!("Invalid values entered for: {}", errs.join(", ")) }),
             );
         }
@@ -29,30 +28,28 @@ pub fn create_board_rt(data: rocket::form::Result<Form<NewBoard>>) -> Template {
         },
     };
 
+    match create_board(new_board) {
+        Ok(_n) => render_new(format!("Board created")),
+        Err(e) => render_new(format!("Failed to create board: {}", e)),
+    }
+}
+
+fn render_new(message: String) -> Template {
     Template::render(
         "board-new",
-        match create_board(new_board) {
-            Ok(_n) => json!({ "message": format!("Board created") }),
-            Err(e) => json!({ "message": format!("Failed to create board: {}", e) }),
+        match get_forums() {
+            Err(e) => json!({"message": e.to_string()}),
+            Ok(f) => json!({
+                "forums": f,
+                "message": message,
+            }),
         },
     )
 }
 
 #[get("/new")]
 pub fn new_board_rt() -> Template {
-    Template::render(
-        "board-new",
-        match get_forums() {
-            Err(e) => json!({"message": e.to_string()}),
-            Ok(f) => json!({ "forums": f }),
-        },
-    )
-}
-
-#[get("/")]
-pub fn board_list_rt() -> String {
-    //TODO
-    "List of boards".to_string()
+    render_new("".to_string())
 }
 
 #[get("/<id>")]

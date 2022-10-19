@@ -16,8 +16,6 @@ pub mod db;
 
 mod routes;
 
-
-
 // #[catch(422)]
 // fn not_parsable(req: &Request) {
 //     println!("{:#?}", req);
@@ -56,7 +54,7 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
         .mount(
             "/boards",
             routes![
-                routes::board::board_list_rt,
+                // routes::board::board_list_rt,
                 routes::board::new_board_rt,
                 routes::board::create_board_rt,
                 routes::board::info_board_rt,

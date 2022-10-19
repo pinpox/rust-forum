@@ -41,3 +41,8 @@ nav > ul {
 }
 
 nav > ul > li { display: inline-block; }
+
+.center { text-align: center; }
+.grow { width: 100%; }
+
+
