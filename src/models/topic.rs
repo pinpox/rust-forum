@@ -9,13 +9,13 @@ use crate::schema::topics;
 #[diesel(belongs_to(Board))]
 pub struct Topic {
     pub id: i32,
-    pub subject: String,
     pub board_id: i32,
+    pub subject: String,
     pub is_sticky: bool,
     pub is_locked: bool,
     pub created_at: i32,
-}
 
+}
 
 #[derive(Debug, Insertable, FromForm)]
 #[diesel(table_name = topics)]
