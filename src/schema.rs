@@ -40,7 +40,7 @@ diesel::table! {
         subject -> Text,
         is_sticky -> Bool,
         is_locked -> Bool,
-        created_at -> Timestamp,
+        created_at -> Integer,
     }
 }
 

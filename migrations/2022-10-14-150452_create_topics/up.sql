@@ -5,6 +5,6 @@ CREATE TABLE topics (
   subject TEXT NOT NULL,
   is_sticky BOOLEAN NOT NULL DEFAULT FALSE,
   is_locked BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at DATETIME NOT NULL
+  created_at INTEGER NOT NULL
 )
 

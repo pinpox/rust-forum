@@ -4,10 +4,6 @@ use serde::{Deserialize, Serialize};
 use crate::db::establish_connection;
 use crate::schema::forums;
 
-// use rocket::request::Form;
-
-// use rocket::request::{Form, FormError};
-
 #[derive(Debug, Insertable, FromForm)]
 #[diesel(table_name = forums)]
 pub struct NewForum {
