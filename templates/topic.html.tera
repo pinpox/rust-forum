@@ -1,0 +1,62 @@
+{% extends "base" %}
+{% block title %}{{topic.subject}}{% endblock title %}
+{% block extra_data %} {% set current_page = "posts" %} {% endblock %}
+{% block content %}
+<h1>{{topic.subject}}</h1>
+
+<table>
+	<thead>
+		<tr>
+			<th>Author</th>
+			<th>Topic</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% set user_map = users | group_by(attribute="id") %}
+		{% set user = user_map[topic.user_id][0] %}
+		<tr>
+			<td class="col-author">
+				<a href="/users/{{user.id}}">{{user.name}}</a>
+				<p><img src="{{user.picture}}" height="80" width="80"/></p>
+			</td>
+
+			<td colspan="grow">
+				<div class="posted"> Posted {{topic.created_at}} <hr/> </div>
+				<div><p>{{topic.content}}</p></div>
+				<hr>
+				<div class="signature">
+					{{user.about}}
+				</div>
+			</td>
+		</tr>
+
+		{% for post in posts %}
+		{% set user = user_map[topic.id][0] %}
+		<tr>
+			<td class="col-author">
+				<a href="/users/{{user.id}}">{{user.name}}</a>
+				<p><img src="{{user.picture}}" height="80" width="80"/></p>
+			</td>
+
+			<td>
+				<div class="posted"> Posted {{post.created_at}} <hr/> </div>
+				<div><p>{{post.content}}</p></div>
+				<hr>
+				<div class="signature">
+					{{user.about}}
+				</div>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+    <form action="/posts/new" method="post">
+		<input type="hidden" name="topic_id" value="{{topic.id}}">
+        <div class="field">
+            <label for="content">Reply to this topic</label>
+            <textarea name="content" id="content" style="height: 150px;"></textarea>
+        </div>
+        <input type="submit" value="Reply">
+    </form>
+{% endblock content %}
