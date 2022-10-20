@@ -1,8 +1,9 @@
 use rocket::*;
 
-use crate::models::topic::*;
 use crate::models::board::*;
-
+use crate::models::post::*;
+use crate::models::topic::*;
+use crate::models::user::*;
 
 use rocket_dyn_templates::Template;
 use serde_json::json;
@@ -13,7 +14,6 @@ use rocket::form::Form;
 pub fn topic_list_rt() -> String {
     "List of topics".to_string()
 }
-
 
 #[post("/", data = "<data>")]
 pub fn create_topic_rt(data: rocket::form::Result<Form<NewTopic>>) -> Template {
@@ -31,9 +31,11 @@ pub fn create_topic_rt(data: rocket::form::Result<Form<NewTopic>>) -> Template {
         Ok(d) => NewTopic {
             created_at: 0, // TODO
             board_id: d.board_id,
+            user_id: 0, //TODO
             is_locked: d.is_locked,
             is_sticky: d.is_sticky,
             subject: d.subject.to_string(),
+            content: d.content.to_string(),
         },
     };
 
@@ -61,10 +63,37 @@ pub fn new_topic_rt() -> Template {
     render_new("".to_string())
 }
 
-
 #[get("/<id>")]
-pub fn info_topic_rt(id: String) -> String {
-    format!("Info for topic {}", id)
+pub fn info_topic_rt(id: i32) -> Template {
+    Template::render(
+        "topic",
+        match get_topic_by_id(id) {
+            Err(e) => {
+                println!("Failed to get topic ID: {} ({:#?})", id, e);
+                json!({"message": e.to_string()})
+            }
+            Ok(t) => match get_topic_posts(t.id) {
+                Err(e) => {
+                    println!("{:#?}", e);
+                    json!({"message": e.to_string()})
+                }
+                Ok(p) => match get_topic_users(t.id) {
+                    Err(e) => {
+                        println!("{:#?}", e);
+                        json!({"message": e.to_string()})
+                    }
+                    Ok(u) => {
+                        println!("{:#?}", t);
+                        json!({
+                            "posts": p,
+                            "topic": t,
+                            "users": u,
+                        })
+                    }
+                },
+            },
+        },
+    )
 }
 
 #[put("/<id>")]

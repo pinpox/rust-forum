@@ -5,7 +5,7 @@ pub fn post_list_rt() -> String {
     "List of posts".to_string()
 }
 
-#[post("/")]
+#[post("/new")]
 pub fn new_post_rt() -> String {
     "Creation of new post".to_string()
 }
