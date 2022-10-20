@@ -4,6 +4,14 @@
 {% block content %}
 <h1>New Forum</h1>
 
+{% if flash %}
+	{% if flash.kind == "success" %}
+		<p class="flash-success">{{flash.message}}</p>
+	{% else %}
+		<p class="flash-error">{{flash.message}}</p>
+	{% endif %}
+{% endif %}
+
 {% if message %} <span> {{ message }} </span> {% endif %}
 
 <form action="/forums" method="post">

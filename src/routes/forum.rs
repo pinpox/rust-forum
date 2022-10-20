@@ -6,21 +6,22 @@ extern crate serde_json;
 
 use rocket::form::Form;
 
+use rocket::response::{Flash, Redirect};
+use rocket::request::FlashMessage;
+
 use serde_json::json;
 
 //TODO show error on invalid inputs
 #[post("/", data = "<data>")]
-pub fn create_forum_rt(data: rocket::form::Result<Form<NewForum>>) -> Template {
+pub fn create_forum_rt(data: rocket::form::Result<Form<NewForum>>) ->  Flash<Redirect> {
+
     let new_forum = match data {
         Err(errors) => {
             let errs: Vec<String> = errors
                 .iter()
                 .map(|e| format!("{}", e.name.as_ref().expect(", ")))
                 .collect();
-            return Template::render(
-                "forum-new",
-                json!({ "message": format!("Invalid values entered for: {}", errs.join(", ")) }),
-            );
+            return Flash::error(Redirect::to(uri!("/forums/new")), "Error creating forum");
         }
         Ok(d) => NewForum {
             name: d.name.to_string(),
@@ -29,18 +30,23 @@ pub fn create_forum_rt(data: rocket::form::Result<Form<NewForum>>) -> Template {
         },
     };
 
-    Template::render(
-        "forum-new",
+    // Template::render(
+        // "forum-new",
         match create_forum(new_forum) {
-            Ok(_n) => json!({ "message": format!("Forum created succesfully!") }),
-            Err(e) => json!({ "message": format!("Error creating forum: {}", e) }),
-        },
-    )
+            // Ok(_n) => json!({ "message": format!("Forum created succesfully!") }),
+            Ok(_n) => Flash::success(Redirect::to(uri!("/forums/new")), "Forum created!"),
+            Err(e) => Flash::error(Redirect::to(uri!("/forums/new")), format!("Error creating forum: {}", e))
+
+                // json!({ "message": format!("Error creating forum: {}", e) }),
+        }
 }
 
 #[get("/new")]
-pub fn new_forum_rt() -> Template {
-    Template::render("forum-new", json!({}))
+pub fn new_forum_rt(flash: Option<FlashMessage>) -> Template {
+    Template::render(
+        "forum-new",
+        json!({ "flash": flash }),
+    )
 }
 
 #[get("/<id>")]
@@ -76,7 +82,6 @@ pub fn delete_forum_rt(id: String) -> String {
 
 #[get("/")]
 pub fn forum_list_rt() -> Template {
-
     Template::render(
         "forums",
         match get_forums() {

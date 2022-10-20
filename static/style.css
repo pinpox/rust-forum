@@ -56,3 +56,6 @@ textarea {
 	display: block;
 	box-sizing: border-box;
 }
+
+p.flash-success { color: green; }
+p.flash-error { color: red; }
