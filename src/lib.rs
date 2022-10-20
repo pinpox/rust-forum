@@ -1,8 +1,8 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #![allow(unused_attributes)]
 
-
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
 #[macro_use]
 use rocket::*;
@@ -10,9 +10,9 @@ use rocket::*;
 use rocket::fs::FileServer;
 use rocket_dyn_templates::Template;
 
+pub mod db;
 pub mod models;
 pub mod schema;
-pub mod db;
 
 mod routes;
 
@@ -73,7 +73,6 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
                 routes::topic::delete_topic_rt
             ],
         )
-
         .mount(
             "/posts",
             routes![
@@ -84,12 +83,7 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
                 routes::post::delete_post_rt
             ],
         )
-
-        .mount(
-            "/admin",
-            routes![
-                routes::admin::manage_rt,
-            ],
-        )
+        .mount("/admin", routes![routes::admin::manage_rt])
+        .mount("/", routes![routes::other::error_rt])
         .mount("/static", FileServer::from("static/"))
 }

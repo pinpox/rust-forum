@@ -1,27 +1,26 @@
+use rocket::form::Form;
+use rocket::request::FlashMessage;
+use rocket::response::{Flash, Redirect};
+use rocket_dyn_templates::Template;
+extern crate serde_json;
+use serde_json::json;
+
 use crate::models::board::*;
 use crate::models::forum::*;
 
-use rocket_dyn_templates::Template;
-extern crate serde_json;
-
-use rocket::form::Form;
-
-use rocket::response::{Flash, Redirect};
-use rocket::request::FlashMessage;
-
-use serde_json::json;
-
 //TODO show error on invalid inputs
 #[post("/", data = "<data>")]
-pub fn create_forum_rt(data: rocket::form::Result<Form<NewForum>>) ->  Flash<Redirect> {
-
+pub fn create_forum_rt(data: rocket::form::Result<Form<NewForum>>) -> Flash<Redirect> {
     let new_forum = match data {
         Err(errors) => {
             let errs: Vec<String> = errors
                 .iter()
                 .map(|e| format!("{}", e.name.as_ref().expect(", ")))
                 .collect();
-            return Flash::error(Redirect::to(uri!("/forums/new")), "Error creating forum");
+            return Flash::error(
+                Redirect::to(uri!("/forums/new")),
+                format!("Error creating forum: {}", errs.join(", ")),
+            );
         }
         Ok(d) => NewForum {
             name: d.name.to_string(),
@@ -30,42 +29,43 @@ pub fn create_forum_rt(data: rocket::form::Result<Form<NewForum>>) ->  Flash<Red
         },
     };
 
-    // Template::render(
-        // "forum-new",
-        match create_forum(new_forum) {
-            // Ok(_n) => json!({ "message": format!("Forum created succesfully!") }),
-            Ok(_n) => Flash::success(Redirect::to(uri!("/forums/new")), "Forum created!"),
-            Err(e) => Flash::error(Redirect::to(uri!("/forums/new")), format!("Error creating forum: {}", e))
-
-                // json!({ "message": format!("Error creating forum: {}", e) }),
-        }
+    match create_forum(new_forum) {
+        Ok(_n) => Flash::success(
+            Redirect::to(uri!("/forums/new")),
+            "Forum created succcessfully!",
+        ),
+        Err(e) => Flash::error(
+            Redirect::to(uri!("/forums/new")),
+            format!("Error creating forum: {}", e),
+        ),
+    }
 }
 
 #[get("/new")]
 pub fn new_forum_rt(flash: Option<FlashMessage>) -> Template {
-    Template::render(
-        "forum-new",
-        json!({ "flash": flash }),
-    )
+    Template::render("forum-new", json!({ "flash": flash }))
 }
 
 #[get("/<id>")]
-pub fn info_forum_rt(id: i32) -> Template {
-    Template::render(
-        "forum",
-        match get_forum_by_id(id) {
-            Err(e) => json!({"message": e.to_string()}),
-            Ok(f) => match get_forum_boards(f.id) {
-                Err(e) => json!({"message": e.to_string()}),
-                Ok(b) => {
-                    json!({
-                        "boards": b,
-                        "forum": f,
-                    })
-                }
-            },
+pub fn info_forum_rt(id: i32) -> Result<Template, Flash<Redirect>> {
+    match get_forum_by_id(id) {
+        Err(e) => Err(Flash::error(
+            Redirect::to(uri!("/error")),
+            format!("Error creating forum: {}", e),
+        )),
+
+        Ok(f) => match get_forum_boards(f.id) {
+            Err(e) => Err(Flash::error(
+                Redirect::to(uri!("/error")),
+                format!("Error creating forum: {}", e),
+            )),
+
+            Ok(b) => Ok(Template::render(
+                "forum",
+                json!({ "boards": b, "forum": f }),
+            )),
         },
-    )
+    }
 }
 
 #[put("/<id>")]

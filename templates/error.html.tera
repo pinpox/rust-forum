@@ -1,0 +1,26 @@
+{% extends "base" %}
+{% block title %}Error{% endblock title %}
+{% block extra_data %} {% set current_page = "error" %} {% endblock %}
+{% block content %}
+
+<h1>Error occured</h1>
+
+<div class="center error-box">
+
+	<img src="/static/panic.png" height="300" alt="panik">
+
+	{% if flash %}
+	<p>An error has occured:</p>
+	{% if flash.kind == "success" %}
+	<p class="flash-success">{{flash.message}}</p>
+	{% else %}
+	<p class="flash-error">{{flash.message}}</p>
+	{% endif %}
+	{% endif %}
+	<p>
+	<a href="/">Take me home</a>
+	</p>
+</div>
+
+
+{% endblock content %}

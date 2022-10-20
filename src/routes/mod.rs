@@ -5,3 +5,4 @@ pub mod post;
 pub mod board;
 pub mod forum;
 pub mod admin;
+pub mod other;
