@@ -1,4 +1,5 @@
 #![feature(proc_macro_hygiene, decl_macro)]
+
 #![allow(unused_attributes)]
 
 #[macro_use]
@@ -9,6 +10,11 @@ use rocket::*;
 // use rocket_contrib::helmet::SpaceHelmet;
 use rocket::fs::FileServer;
 use rocket_dyn_templates::Template;
+extern crate serde_json;
+
+
+use rocket::request::FlashMessage;
+// use rocket::response::{Flash};
 
 pub mod db;
 pub mod models;
@@ -16,25 +22,63 @@ pub mod schema;
 
 mod routes;
 
-// #[catch(422)]
-// fn not_parsable(req: &Request) {
-//     println!("{:#?}", req);
+use rocket::{get, info_, response::Redirect, routes};
+use rocket_airlock::Airlock;
+// use user::User;
+
+// #[rocket::launch]
+// fn rocket() -> _ {
+//     rocket::build()
+//         .mount("/", routes![index, index_anon])
+//         .attach(Airlock::<hatch::OidcHatch>::fairing())
 // }
+//
+//
+// use user::User;
+//
+use serde_json::json;
+use crate::models::user::{User, UserSubject};
+
+mod hatch;
+
+
+
+#[get("/")]
+pub fn index_auth(user: User) -> String {
+    format!("Hello user: {}", user.name)
+}
+
+#[get("/", rank = 2)]
+pub fn index_auth_not_complete(subject: UserSubject, flash: Option<FlashMessage>) -> Template {
+    info_!("Incomplete user loggend in: {}", subject.subject);
+    Template::render("user-edit", json!({"subject": subject.subject}))
+}
+
+#[get("/", rank = 3)]
+pub fn index_auth_anon() -> Redirect {
+    info_!("Anonymous user requested / -> redirecting to /login");
+    Redirect::to("/login")
+}
 
 #[launch]
 pub fn rocket_builder() -> rocket::Rocket<Build> {
     rocket::build()
-        // .register(catchers![not_parsable])
+        .register("/", catchers![routes::other::not_found])
         .attach(Template::fairing())
+        .mount(
+            "/",
+            routes![index_auth, index_auth_not_complete, index_auth_anon],
+        )
+        .attach(Airlock::<hatch::OidcHatch>::fairing())
         // .attach(SpaceHelmet::default())
         .mount("/ping", routes![routes::ping::ping_fn])
-        .mount("/", routes![routes::forum::forum_list_rt])
+        // .mount("/", routes![routes::forum::forum_list_rt])
         .mount(
             "/users",
             routes![
-                routes::user::user_list_rt,
-                routes::user::new_user_rt,
-                // routes::user::create_user_rt,
+                // routes::user::user_list_rt,
+                // routes::user::new_user_rt,
+                routes::user::complete_user_rt,
                 routes::user::info_user_rt,
                 routes::user::update_user_rt,
                 routes::user::delete_user_rt
@@ -77,13 +121,16 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
             "/posts",
             routes![
                 routes::post::post_list_rt,
-                routes::post::new_post_rt,
-                routes::post::info_post_rt,
+                routes::post::create_post_rt,
+                // routes::post::info_post_rt,
                 routes::post::update_post_rt,
                 routes::post::delete_post_rt
             ],
         )
         .mount("/admin", routes![routes::admin::manage_rt])
-        .mount("/", routes![routes::other::error_rt])
+        .mount("/", routes![
+               routes::other::error_rt,// Error page
+                routes::user::edit_user_rt // Edit own account
+        ])
         .mount("/static", FileServer::from("static/"))
 }

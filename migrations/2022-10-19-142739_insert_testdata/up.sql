@@ -22,11 +22,10 @@ INSERT INTO users (
 	name,
 	about,
 	picture,
-	password,
 	is_admin ) VALUES
-(1, "user1", "I'm user 1", "https://picsum.photos/seed/user1/200/300", "pass1", true),
-(2, "user2", "I'm user 2", "https://picsum.photos/seed/user2/200/300", "pass2", false),
-(3, "user3", "I'm user 3", "https://picsum.photos/seed/user2/200/300", "pass3", false);
+("1", "user1", "I'm user 1", "https://picsum.photos/seed/user1/200/300", true),
+("2", "user2", "I'm user 2", "https://picsum.photos/seed/user2/200/300", false),
+("3", "user3", "I'm user 3", "https://picsum.photos/seed/user2/200/300", false);
 
 INSERT INTO topics (
 	id,

@@ -3,6 +3,7 @@
 {% block extra_data %} {% set current_page = "home" %} {% endblock %}
 {% block content %}
 <h1>Forums</h1>
+                 user: {% if user %} {{ user }} {% endif %}
 <table>
 		<thead>
 				<tr>

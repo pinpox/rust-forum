@@ -46,11 +46,10 @@ diesel::table! {
 
 diesel::table! {
     users (id) {
-        id -> Integer,
+        id -> Text,
         name -> Text,
-        about -> Text,
-        picture -> Text,
-        password -> Text,
+        about -> Nullable<Text>,
+        picture -> Nullable<Text>,
         is_admin -> Bool,
     }
 }

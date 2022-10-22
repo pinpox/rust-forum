@@ -80,8 +80,17 @@ pub fn delete_forum_rt(id: String) -> String {
     format!("Delete forum {}", id)
 }
 
+use crate::User;
+
 #[get("/")]
-pub fn forum_list_rt() -> Template {
+pub fn forum_list_rt(user: Option<User>) -> Template {
+
+    let user_name: Option<String> = match user {
+        Some(u) => Some(u.name.to_string()),
+        None => None
+    };
+
+
     Template::render(
         "forums",
         match get_forums() {
@@ -90,7 +99,8 @@ pub fn forum_list_rt() -> Template {
                 Err(e) => json!({"message": e.to_string()}),
                 Ok(b) => json!({
                     "boards": b,
-                    "forums": f
+                    "forums": f,
+                    "user": user_name
                 }),
             },
         },

@@ -1,45 +1,65 @@
-use rocket::*;
+// use rocket::*;
 
+use rocket::{get, post};
+
+// use rocket::request::FlashMessage;
+use rocket::response::{Flash, Redirect};
+
+extern crate serde_json;
 use rocket_dyn_templates::Template;
+use serde_json::json;
 
 use crate::models::user::*;
-use std::collections::HashMap;
+use rocket::form::Form;
+// use std::collections::HashMap;
 
-#[get("/")]
-pub fn user_list_rt() -> Template {
-    let user2 = User {
-        id: 2,
-        about: "About user 2".to_string(),
-        name: "Username2".to_string(),
-        password: "pw2".to_string(),
-        picture: "pic2".to_string(),
-        is_admin: false,
-    };
-
-    let user1 = User {
-        id: 1,
-        about: "About user 1".to_string(),
-        name: "Username1".to_string(),
-        password: "pw1".to_string(),
-        picture: "pic1".to_string(),
-        is_admin:true,
-    };
-
-    let users = [user1, user2];
-    let mut context = HashMap::new();
-    context.insert("users", &users);
-
-    Template::render("user-list", &context)
-}
-
-// #[get("/users")]
-// pub fn user_list_rt() -> String {
-//     "List of users".to_string()
+// #[get("/new")]
+// pub fn new_user_rt(flash: Option<FlashMessage>) -> Template {
+//     Template::render("forum-new", json!({ "flash": flash }))
 // }
 
-#[post("/")]
-pub fn new_user_rt() -> String {
-    "Creation of new user".to_string()
+//TODO show error on invalid inputs
+#[post("/complete", data = "<data>")]
+pub fn complete_user_rt(
+    subject: UserSubject,
+    data: rocket::form::Result<Form<UserUpdateData>>,
+) -> Flash<Redirect> {
+    let new_user = match data {
+        Err(errors) => {
+            let errs: Vec<String> = errors
+                .iter()
+                .map(|e| format!("{}", e.name.as_ref().expect(", ")))
+                .collect();
+            panic!();
+            // return Flash::error(
+            //     Redirect::to(uri!("/TODO/new")),
+            //     format!("Error creating forum: {}", errs.join(", ")),
+            // );
+        }
+
+        Ok(d) => {
+            User {
+                id: subject.subject,
+                name: d.name.to_owned(),
+                about: d.about.to_owned(),
+                picture: d.picture.to_owned(),
+                is_admin: false, // TODO FIX THIS: will remove admin rights on user update
+            }
+        }
+    };
+
+    match create_or_update_user(new_user) {
+        Ok(_n) => Flash::success(Redirect::to(uri!("/forums")), "User updated succcessfully!"),
+        Err(e) => Flash::error(
+            Redirect::to(uri!("/TODO")),
+            format!("Error creating user: {}", e),
+        ),
+    }
+}
+
+#[get("/account")]
+pub fn edit_user_rt(user: User) -> Template {
+    Template::render("user-edit", json!({ "user": user }))
 }
 
 #[get("/<id>")]

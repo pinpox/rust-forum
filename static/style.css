@@ -31,7 +31,8 @@ tbody {
 }
 
 tr > .forum {
-	background-color: khaki;
+	/* background-color: cadetblue; */
+	background-color: rgba(173, 216, 230, 0.15);
 	color:#222831;
 
 }
@@ -58,26 +59,34 @@ textarea {
 	box-sizing: border-box;
 }
 
+input, textarea {
+	background-color: rgba(255, 255, 255, 0.15);
+	font: 16px/1.4 system-ui, sans-serif;
+	color: lightblue;
+	border: 0;
+}
+
+button {
+	background-color: Aquamarine;
+	font: 16px/1.4 system-ui, sans-serif;
+	color:#222831;
+
+}
+
 p.flash-success { color: green; }
 p.flash-error { color: red; }
 
-a:link {
-	color: lightblue;
-}
-
+a:link ,
 a:visited {
-	color: blue;
-}
-nav a:visited, .error-box a:visited {
 	color: lightblue;
 }
 
 .error-box {
-	padding-top: 10%;
+	padding-top: 5%;
 }
 
 .error-box img {
-	border: 2px solid;
+	/* border: 2px solid; */
 	display:inline-block;
-	padding: 1em;
+	/* padding: 1em; */
 }

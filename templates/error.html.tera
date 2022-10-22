@@ -7,7 +7,7 @@
 
 <div class="center error-box">
 
-	<img src="/static/panic.png" height="300" alt="panik">
+	<img src="/static/panic.png" height="200" alt="panik">
 
 	{% if flash %}
 	<p>An error has occured:</p>
