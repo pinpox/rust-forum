@@ -10,9 +10,16 @@
 		<nav>
 				<ul>
 						<li><a href="/">{% if current == "home" %} [home] {% else %} home {% endif %}</a></li>
-						<li><a href="/admin">{% if current == "admin" %}[admin]{% else %}admin{% endif %}</a></li>
 						<li><a href="/posts">{% if current == "posts" %}[posts]{% else %}posts{% endif %}</a></li>
+						{% if user %}
+						<li><a href="/admin">{% if current == "admin" %}[admin]{% else %}admin{% endif %}</a></li>
 						<li><a href="/account">{% if current == "account" %}[account]{% else %}account{% endif %}</a></li>
+						<li>Logged in as: {{ user.name }}</li>
+						{% else %}
+						<li><a href="/login">login</a></li>
+						{% endif %}
+
+
 						<!-- <li><a href="/atom">{% if current == "atom" %}[atom]{% else %}atom{% endif %}</a></li> -->
 						<!-- <li><a href="/logout">{% if current == "logout" %}[logout]{% else %}logout{% endif %}</a></li> -->
 				</ul>

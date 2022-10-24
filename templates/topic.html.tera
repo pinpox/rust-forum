@@ -15,7 +15,7 @@
 		{% set user_map = users | group_by(attribute="id") %}
 		{% set user = user_map[topic.user_id][0] %}
 		<tr>
-			<td class="col-author">
+			<td class="col-author center">
 				<a href="/users/{{user.id}}">{{user.name}}</a>
 				<p><img src="{{user.picture}}" height="80" width="80"/></p>
 			</td>
@@ -31,9 +31,9 @@
 		</tr>
 
 		{% for post in posts %}
-		{% set user = user_map[topic.id][0] %}
+		{% set user = user_map[post.user_id][0] %}
 		<tr>
-			<td class="col-author">
+			<td class="col-author center">
 				<a href="/users/{{user.id}}">{{user.name}}</a>
 				<p><img src="{{user.picture}}" height="80" width="80"/></p>
 			</td>

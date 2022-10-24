@@ -1,0 +1,26 @@
+{% extends "base" %}
+{% block title %}Posts{% endblock title %}
+{% block extra_data %} {% set current_page = "posts" %} {% endblock %}
+{% block content %}
+<h1>Posts</h1>
+<table>
+		<thead>
+				<tr>
+						<th>Topic</th>
+						<th>Author</th>
+						<th>Posted</th>
+				</tr>
+		</thead>
+		<tbody>
+				{% for post in posts %}
+				<tr>
+						<td colspan="grow">
+								<a href="/topcs/{{post.topic_id}}">{{post.topic_id}}</a>
+						</td>
+						<td>{{post.user_id}}</td>
+						<td>{{post.created_at}}</td>
+				</tr>
+				{% endfor %}
+		</tbody>
+</table>
+{% endblock content %}

@@ -6,7 +6,7 @@
 {% block content %}
 <h1>Admin</h1>
 <ul>
-		<li>Manage Forums</li>
+		<li>Manage Forums?</li>
 		<li>Manage Boards</li>
 		<li>Manage Users</li>
 </ul>

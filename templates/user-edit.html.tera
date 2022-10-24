@@ -13,19 +13,21 @@
 	{% endif %}
 {% endif %}
 
+{% if not user %}
 <h3>Hello new user!</h3>
 <p> Your profile is still incomplete.</br>Please choose a <b>name</b> and
 optionally add a signature and a URL to your profile picture. </p>
+{% endif %}
 
 <form action="/users/complete" method="post">
 		<label for="name">Name:</label><br>
-		<input type="text" id="name" name="name"><br>
+		<input type="text" id="name" name="name" {%if user.name %}value="{{user.name}}"{% endif %}><br>
 
 		<label for="about">About:</label><br>
-		<input type="text" id="about" name="about"><br>
+		<input type="text" id="about" name="about" {%if user.about %}value="{{user.about}}"{% endif %}><br>
 
 		<label for="picture">Picture:</label><br>
-		<input type="text" id="picture" name="picture"><br>
+		<input type="text" id="picture" name="picture" {%if user.picture %} value="{{user.picture}}"{% endif %}></br>
 
 		<button type="submit">Submit</button>
 </form>

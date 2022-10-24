@@ -1,0 +1,25 @@
+{% extends "base" %}
+{% block title %}{{user.name}}{% endblock title %}
+{% block extra_data %} {% set current_page = "user" %} {% endblock %}
+{% block content %}
+<h1>{{user.name}}</h1>
+
+
+<img src="{{user.picture}}" alt="{{user.name}}">
+About: {{user.about}}
+Admin: {{user.is_admin}}
+
+
+<h2>Activity</h2>
+<table>
+		<thead>
+				<tr>
+						<th>Topic</th>
+						<th>Author</th>
+						<th>Posted</th>
+				</tr>
+		</thead>
+		<tbody>
+		</tbody>
+</table>
+{% endblock content %}

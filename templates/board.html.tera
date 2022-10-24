@@ -6,7 +6,9 @@
 {% block content %}
 <h1>{{board.name}}</h1>
 
-<a href="/topics/new">New Topic</a>
+{% if user %}
+<form action="/topics/new"> <button type="submit">New Topic</button> </form>
+{%endif%}
 
 <table>
 	<thead>
