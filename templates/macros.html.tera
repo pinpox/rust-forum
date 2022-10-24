@@ -12,7 +12,9 @@
 						<li><a href="/">{% if current == "home" %} [home] {% else %} home {% endif %}</a></li>
 						<li><a href="/posts">{% if current == "posts" %}[posts]{% else %}posts{% endif %}</a></li>
 						{% if user %}
+						{% if user.is_admin %}
 						<li><a href="/admin">{% if current == "admin" %}[admin]{% else %}admin{% endif %}</a></li>
+						{% endif %}
 						<li><a href="/account">{% if current == "account" %}[account]{% else %}account{% endif %}</a></li>
 						<li>Logged in as: {{ user.name }}</li>
 						{% else %}
