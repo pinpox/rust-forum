@@ -20,6 +20,7 @@ pub mod schema;
 
 mod routes;
 
+use rocket::response::Flash;
 use rocket::{get, info_, response::Redirect, routes};
 use rocket_airlock::Airlock;
 // use user::User;
@@ -30,8 +31,12 @@ use serde_json::json;
 mod hatch;
 
 #[get("/login")]
-pub fn index_auth(user: User) -> String {
-    format!("Hello user: {}", user.name)
+pub fn index_auth(user: User) -> Flash<Redirect> {
+    format!("Hello user: {}", user.name);
+    Flash::success(
+        Redirect::to(uri!("/forums")),
+        format!("Welcome, {}", user.name),
+    )
 }
 
 #[get("/login", rank = 2)]
