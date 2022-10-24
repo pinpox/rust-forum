@@ -83,7 +83,6 @@ pub fn info_topic_rt(id: i32) -> Template {
                         json!({"message": e.to_string()})
                     }
                     Ok(u) => {
-                        println!("{:#?}", t);
                         json!({
                             "posts": p,
                             "topic": t,
@@ -96,12 +95,12 @@ pub fn info_topic_rt(id: i32) -> Template {
     )
 }
 
-#[put("/<id>")]
-pub fn update_topic_rt(id: String) -> String {
-    format!("Update info for topic {}", id)
-}
+// #[put("/<id>")]
+// pub fn update_topic_rt(id: String) -> String {
+//     format!("Update info for topic {}", id)
+// }
 
-#[delete("/<id>")]
-pub fn delete_topic_rt(id: String) -> String {
-    format!("Delete topic {}", id)
-}
+// #[delete("/<id>")]
+// pub fn delete_topic_rt(id: String, user: User) -> String {
+//     format!("Delete topic {}", id)
+// }

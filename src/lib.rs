@@ -32,7 +32,7 @@ mod hatch;
 
 #[get("/login")]
 pub fn index_auth(user: User) -> Flash<Redirect> {
-    format!("Hello user: {}", user.name);
+    info_!("Successful login from: {}", user.name);
     Flash::success(
         Redirect::to(uri!("/forums")),
         format!("Welcome, {}", user.name),
@@ -42,7 +42,13 @@ pub fn index_auth(user: User) -> Flash<Redirect> {
 #[get("/login", rank = 2)]
 pub fn index_auth_not_complete(subject: UserSubject, flash: Option<FlashMessage>) -> Template {
     info_!("Incomplete user loggend in: {}", subject.subject);
-    Template::render("user-edit", json!({"subject": subject.subject}))
+    Template::render(
+        "user-edit",
+        json!({
+            "subject": subject.subject,
+            "flash": flash,
+        }),
+    )
 }
 
 #[get("/login", rank = 3)]
@@ -108,8 +114,8 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
                 // routes::topic::topic_list_rt,
                 routes::topic::new_topic_rt,
                 routes::topic::create_topic_rt,
-                routes::topic::update_topic_rt,
-                routes::topic::delete_topic_rt
+                // routes::topic::update_topic_rt,
+                // routes::topic::delete_topic_rt
             ],
         )
         .mount(

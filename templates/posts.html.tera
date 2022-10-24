@@ -15,7 +15,7 @@
 				{% for post in posts %}
 				<tr>
 						<td colspan="grow">
-								<a href="/topcs/{{post.topic_id}}">{{post.topic_id}}</a>
+								<a href="/topics/{{post.topic_id}}">{{post.topic_id}}</a>
 						</td>
 						<td>{{post.user_id}}</td>
 						<td>{{post.created_at}}</td>
