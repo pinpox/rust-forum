@@ -1,6 +1,5 @@
 use anyhow::{anyhow, Error};
 
-
 use dotenvy::dotenv;
 use std::env;
 
@@ -12,11 +11,7 @@ use openidconnect::{
 };
 use rocket::{
     debug_,
-    http::{
-        ext::IntoOwned,
-        uri::Absolute,
-        Cookie, CookieJar, SameSite, Status,
-    },
+    http::{ext::IntoOwned, uri::Absolute, Cookie, CookieJar, SameSite, Status},
     info_,
     request::{FromRequest, Outcome},
     response::{Debug, Redirect},
@@ -46,11 +41,9 @@ impl DerefMut for CoreClient {
 #[rocket::async_trait]
 impl Communicator for CoreClient {
     async fn from(rocket: &Rocket<Build>) -> Result<Self, Box<dyn std::error::Error>> {
-
         let config = get_hatch_config();
 
-        let issuer_url =
-            IssuerUrl::new(config.issuer_url.to_string()).expect("Invalid issuer Url");
+        let issuer_url = IssuerUrl::new(config.issuer_url.to_string()).expect("Invalid issuer Url");
 
         let redirect_url =
             RedirectUrl::new(config.redirect_url.to_string()).expect("Invalid redirect Url");
@@ -62,7 +55,6 @@ impl Communicator for CoreClient {
         // Fetch OpenID Connect discovery document.
         let provider_metadata =
             CoreProviderMetadata::discover_async(issuer_url, async_http_client).await?;
-
 
         info_!("Initializing OpenID Client");
         // Set up the config for the auth process.
@@ -85,7 +77,6 @@ pub struct OidcHatch<'h> {
 
 impl<'h> OidcHatch<'static> {
     pub fn authorize_url(&self) -> (Absolute<'static>, String, String) {
-
         println!("inimpl");
         info_!("Generating authorization Url from Manifest with random token and nonce.");
         // Generate the authorization URL to which we'll redirect the user.
@@ -153,7 +144,6 @@ impl<'h> OidcHatch<'static> {
 }
 
 fn get_hatch_config() -> HatchConfig<'static> {
-
     dotenv().ok();
 
     let issuer_url = env::var("OIDC_ISSUER_URL").expect("OIDC_ISSUER_URL must be set");
@@ -161,12 +151,12 @@ fn get_hatch_config() -> HatchConfig<'static> {
     let client_id = env::var("OIDC_CLIENT_ID").expect("OIDC_CLIENT_ID must be set");
     let client_secret = env::var("OIDC_CLIENT_SECRET").expect("OIDC_CLIENT_SECRET must be set");
 
-        HatchConfig {
-            issuer_url: Absolute::parse_owned(issuer_url).expect("valid URI"),
-            redirect_url: Absolute::parse_owned(redirect_url).expect("valid URI"),
-            client_id: client_id.to_string(),
-            client_secret: client_secret.to_string(),
-        }
+    HatchConfig {
+        issuer_url: Absolute::parse_owned(issuer_url).expect("valid URI"),
+        redirect_url: Absolute::parse_owned(redirect_url).expect("valid URI"),
+        client_id: client_id.to_string(),
+        client_secret: client_secret.to_string(),
+    }
 }
 
 #[rocket::async_trait]
@@ -194,8 +184,6 @@ impl<'h> Hatch for OidcHatch<'static> {
     async fn from(
         rocket: &Rocket<Build>,
     ) -> Result<OidcHatch<'static>, Box<dyn std::error::Error>> {
-
-
         let config = get_hatch_config();
 
         let oidc_hatch = OidcHatch {
@@ -222,20 +210,20 @@ impl<'h> HatchConfig<'h> {
     // pub fn from(config: Figment) -> Result<HatchConfig<'h>, Box<dyn std::error::Error>> {
 }
 
-#[rocket::get("/login", rank = 2)]
+#[rocket::get("/authenticate", rank = 2)]
 pub fn login(airlock: Airlock<OidcHatch<'static>>, cookies: &CookieJar<'_>) -> Redirect {
-
-
     info_!("In fn login1");
     let (authorize_url, csrf_state, nonce) = airlock.hatch.authorize_url();
+
+    println!("SETTING COOKIE");
     cookies.add_private(
         Cookie::build("oicd_state", csrf_state)
-            .same_site(SameSite::Lax)
+            .same_site(SameSite::None)
             .finish(),
     );
     cookies.add_private(
         Cookie::build("oicd_nonce", nonce)
-            .same_site(SameSite::Lax)
+            .same_site(SameSite::None)
             .finish(),
     );
 
@@ -243,12 +231,13 @@ pub fn login(airlock: Airlock<OidcHatch<'static>>, cookies: &CookieJar<'_>) -> R
     Redirect::to(authorize_url)
 }
 
-#[rocket::get("/login")]
+#[rocket::get("/authenticate")]
 pub(crate) async fn login_callback(
     airlock: Airlock<OidcHatch<'static>>,
     auth_response: AuthenticationResponse,
     cookies: &CookieJar<'_>,
 ) -> Result<Redirect, Debug<Error>> {
+    println!("IN LOGIN_CALLBACK");
     debug_!("[login_callback] Returned code: {}", &auth_response.code);
 
     // Is part of the OpenID Connect Session Management specification: https://openid.net/specs/openid-connect-session-1_0.html
@@ -262,23 +251,17 @@ pub(crate) async fn login_callback(
 
     // Set a private cookie with the user's name, and redirect to the home page.
     cookies.add_private(
-        Cookie::build(
-            "sub",
-            claim_resonse
-                .claims
-                .subject()
-                .to_string(),
-        )
-        .same_site(SameSite::Lax)
-        .finish(),
+        Cookie::build("sub", claim_resonse.claims.subject().to_string())
+            .same_site(SameSite::None)
+            .finish(),
     );
     cookies.add_private(
         Cookie::build("oicd_access_token", claim_resonse.access_token)
-            .same_site(SameSite::Lax)
+            .same_site(SameSite::None)
             .finish(),
     );
 
-    Ok(Redirect::to("/"))
+    Ok(Redirect::to("/login"))
 }
 #[derive(Debug)]
 pub struct ClaimResponse {
@@ -300,15 +283,20 @@ impl<'r> FromRequest<'r> for AuthenticationResponse {
         let code = request.query_value("code").and_then(|code| code.ok());
         let state: Option<String> = request.query_value("state").and_then(|state| state.ok());
 
+        println!("REQUEST: {:#?}", request);
+
         // let session_state = request
         //     .query_value("session_state")
         //     .and_then(|session_state| session_state.ok());
 
         let auth_response = match (code, state) {
-            (Some(code), Some(state) ) => {
+            (Some(code), Some(state)) => {
                 let cookies = request.cookies();
 
                 let state_cookie = cookies.get_private("oicd_state");
+
+                println!("cookies: {:#?}", cookies);
+                println!("state_cookie: {:#?}", state_cookie);
                 match state_cookie {
                     Some(stored_state) if stored_state.value().to_string() == state => {
                         cookies.remove(stored_state.clone());
@@ -317,6 +305,8 @@ impl<'r> FromRequest<'r> for AuthenticationResponse {
                         if other.is_some() {
                             warn_!("The stored state differs from the state returned from the OpenID Provider.");
                         }
+
+                        println!("other: {:#?}", other);
                         return Outcome::Failure((Status::BadRequest, ()));
                     }
                 }
@@ -333,10 +323,7 @@ impl<'r> FromRequest<'r> for AuthenticationResponse {
                     }
                 };
 
-                AuthenticationResponse {
-                    code,
-                    nonce,
-                }
+                AuthenticationResponse { code, nonce }
             }
             _ => {
                 info_!("Either 'code' or 'state' was missing on the providers response.");

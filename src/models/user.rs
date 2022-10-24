@@ -44,6 +44,14 @@ pub struct UserUpdateData {
     pub picture: Option<String>,
 }
 
+#[derive(Debug , FromForm, Serialize)]
+pub struct AdminUser {
+    pub id: String,
+    pub name: String,
+    pub about: Option<String>,
+    pub picture: Option<String>,
+}
+
 // #[derive(Debug, Insertable, FromForm)]
 // #[diesel(table_name = forums)]
 // pub struct NewUser {
@@ -84,36 +92,65 @@ pub fn get_topic_users(t_id: i32) -> Result<Vec<User>, diesel::result::Error> {
     users.load::<User>(&mut connection)
 }
 
+pub async fn user_from_request(request: &Request<'_>) -> Option<User> {
+    let cookies = request.cookies();
+    match cookies.get_private("oicd_access_token") {
+        Some(token_cookie) => {
+            let hatch = request
+                .guard::<Airlock<OidcHatch>>()
+                .await
+                .expect(&format!(
+                    "Hatch '{}' was not installed into the airlock.",
+                    OidcHatch::name()
+                ))
+                .hatch;
+
+            if hatch.validate_access_token(token_cookie.value()) {
+                let subject = cookies.get_private("sub").unwrap().value().to_string();
+
+                info_!("Knonw User '{}' logged in!", &subject);
+                return match crate::models::user::get_by_id(&subject) {
+                    Ok(u) => Some(u),
+                    Err(..) => None,
+                };
+            }
+            None
+            // Outcome::Forward(())
+        }
+        _ => None,
+    }
+}
+
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for User {
     type Error = ();
 
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let cookies = request.cookies();
-        match cookies.get_private("oicd_access_token") {
-            Some(token_cookie) => {
-                let hatch = request
-                    .guard::<Airlock<OidcHatch>>()
-                    .await
-                    .expect(&format!(
-                        "Hatch '{}' was not installed into the airlock.",
-                        OidcHatch::name()
-                    ))
-                    .hatch;
+        match user_from_request(request).await {
+            Some(u) => Outcome::Success(u),
+            None => Outcome::Forward(()),
+        }
+    }
+}
 
-                if hatch.validate_access_token(token_cookie.value()) {
-                    let subject = cookies.get_private("sub").unwrap().value().to_string();
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for AdminUser {
+    type Error = ();
 
-                    info_!("Knonw User '{}' logged in!", &subject);
-                    match crate::models::user::get_by_id(&subject) {
-                        Ok(u) => return Outcome::Success(u),
-                        Err(_e) => return Outcome::Forward(()), // panic!("User '{}' not found in DB: {}", subject.to_string(), e)
-                    }
+    async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
+        match user_from_request(request).await {
+            Some(u) => {
+                if u.is_admin {
+                    return Outcome::Success(AdminUser {
+                        id: u.id,
+                        name: u.name,
+                        about: u.about,
+                        picture: u.picture,
+                    });
                 }
-
                 Outcome::Forward(())
             }
-            _ => Outcome::Forward(()),
+            None => Outcome::Forward(()),
         }
     }
 }

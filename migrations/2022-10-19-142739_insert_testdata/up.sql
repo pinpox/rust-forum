@@ -36,9 +36,9 @@ INSERT INTO topics (
 	is_sticky,
 	is_locked,
 	created_at ) VALUES
-(1, 1, 1, "Subject topic 1", "Content for topic 1", false, false, 0),
-(2, 1, 1, "Subject topic 2", "Content for topic 2", false, false, 0),
-(3, 2, 2, "Subject topic 3", "Content for topic 3", false, false, 0);
+(1, 1, "1", "Subject topic 1", "Content for topic 1", false, false, 0),
+(2, 1, "1", "Subject topic 2", "Content for topic 2", false, false, 0),
+(3, 2, "2", "Subject topic 3", "Content for topic 3", false, false, 0);
 
 
 -- Your SQL goes here
@@ -49,9 +49,9 @@ INSERT INTO posts (
 	topic_id,
 	created_at
 ) VALUES
-(1, 1, "Content for post 1", 1, 0),
-(2, 2, "Content for post 2", 1, 1),
-(3, 2, "Content for post 3", 2, 2),
-(4, 3, "Content for post 4", 2, 3);
+(1, "1", "Content for post 1", 1, 0),
+(2, "2", "Content for post 2", 1, 1),
+(3, "2", "Content for post 3", 2, 2),
+(4, "3", "Content for post 4", 2, 3);
 
 

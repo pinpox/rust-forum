@@ -1,6 +1,6 @@
+use crate::db::establish_connection;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
-use crate::db::establish_connection;
 
 use crate::models::forum::Forum;
 use crate::schema::boards;
@@ -32,18 +32,16 @@ pub struct NewBoard {
     pub is_locked: bool,
 }
 
-
 pub fn create_board(board: NewBoard) -> Result<usize, diesel::result::Error> {
     println!("Creating board: {:?}", board);
     use crate::schema::boards::dsl::*;
     let mut connection = establish_connection();
 
-
     let new_board = NewBoard {
         forum_id: board.forum_id,
         name: board.name,
         description: board.description,
-        updated_at: 0,// TODO
+        updated_at: 0, // TODO
         is_locked: board.is_locked,
         position: board.position,
     };
@@ -69,15 +67,10 @@ pub fn update_board(board: Board) {
 pub fn get_boards() -> Result<Vec<Board>, diesel::result::Error> {
     use crate::schema::boards::dsl::*;
     let mut connection = establish_connection();
-    let b = boards
+    boards
         // .filter(removed.eq(false))
-        .load::<Board>(&mut connection);
-    println!("Found boards: {:#?}", b);
-
-    b
-    // .expect("Error loading boards")
+        .load::<Board>(&mut connection)
 }
-
 
 pub fn get_board_by_id(f_id: i32) -> Result<Board, diesel::result::Error> {
     use crate::schema::boards::dsl::*;

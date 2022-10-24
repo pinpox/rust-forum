@@ -1,5 +1,4 @@
 #![feature(proc_macro_hygiene, decl_macro)]
-
 #![allow(unused_attributes)]
 
 #[macro_use]
@@ -11,7 +10,6 @@ use rocket::*;
 use rocket::fs::FileServer;
 use rocket_dyn_templates::Template;
 extern crate serde_json;
-
 
 use rocket::request::FlashMessage;
 // use rocket::response::{Flash};
@@ -26,38 +24,26 @@ use rocket::{get, info_, response::Redirect, routes};
 use rocket_airlock::Airlock;
 // use user::User;
 
-// #[rocket::launch]
-// fn rocket() -> _ {
-//     rocket::build()
-//         .mount("/", routes![index, index_anon])
-//         .attach(Airlock::<hatch::OidcHatch>::fairing())
-// }
-//
-//
-// use user::User;
-//
-use serde_json::json;
 use crate::models::user::{User, UserSubject};
+use serde_json::json;
 
 mod hatch;
 
-
-
-#[get("/")]
+#[get("/login")]
 pub fn index_auth(user: User) -> String {
     format!("Hello user: {}", user.name)
 }
 
-#[get("/", rank = 2)]
+#[get("/login", rank = 2)]
 pub fn index_auth_not_complete(subject: UserSubject, flash: Option<FlashMessage>) -> Template {
     info_!("Incomplete user loggend in: {}", subject.subject);
     Template::render("user-edit", json!({"subject": subject.subject}))
 }
 
-#[get("/", rank = 3)]
+#[get("/login", rank = 3)]
 pub fn index_auth_anon() -> Redirect {
-    info_!("Anonymous user requested / -> redirecting to /login");
-    Redirect::to("/login")
+    info_!("Anonymous user requested / -> redirecting to /authenticate");
+    Redirect::to("/authenticate")
 }
 
 #[launch]
@@ -67,10 +53,14 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
         .attach(Template::fairing())
         .mount(
             "/",
-            routes![index_auth, index_auth_not_complete, index_auth_anon],
+            routes![
+                index_auth,
+                index_auth_not_complete,
+                index_auth_anon,
+                routes::forum::forum_list_rt,
+            ],
         )
         .attach(Airlock::<hatch::OidcHatch>::fairing())
-        // .attach(SpaceHelmet::default())
         .mount("/ping", routes![routes::ping::ping_fn])
         // .mount("/", routes![routes::forum::forum_list_rt])
         .mount(
@@ -109,10 +99,10 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
         .mount(
             "/topics",
             routes![
-                routes::topic::topic_list_rt,
+                routes::topic::info_topic_rt,
+                // routes::topic::topic_list_rt,
                 routes::topic::new_topic_rt,
                 routes::topic::create_topic_rt,
-                routes::topic::info_topic_rt,
                 routes::topic::update_topic_rt,
                 routes::topic::delete_topic_rt
             ],
@@ -128,9 +118,12 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
             ],
         )
         .mount("/admin", routes![routes::admin::manage_rt])
-        .mount("/", routes![
-               routes::other::error_rt,// Error page
-                routes::user::edit_user_rt // Edit own account
-        ])
+        .mount(
+            "/",
+            routes![
+                routes::other::error_rt,    // Error page (/error)
+                routes::user::edit_user_rt  // Edit own account (/account)
+            ],
+        )
         .mount("/static", FileServer::from("static/"))
 }

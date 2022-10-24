@@ -24,7 +24,7 @@ diesel::table! {
 diesel::table! {
     posts (id) {
         id -> Integer,
-        user_id -> Integer,
+        user_id -> Text,
         content -> Text,
         topic_id -> Integer,
         created_at -> Integer,
@@ -35,7 +35,7 @@ diesel::table! {
     topics (id) {
         id -> Integer,
         board_id -> Integer,
-        user_id -> Integer,
+        user_id -> Text,
         subject -> Text,
         content -> Text,
         is_sticky -> Bool,

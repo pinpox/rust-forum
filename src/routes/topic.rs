@@ -10,13 +10,13 @@ use serde_json::json;
 
 use rocket::form::Form;
 
-#[get("/")]
-pub fn topic_list_rt() -> String {
-    "List of topics".to_string()
-}
+// #[get("/")]
+// pub fn topic_list_rt() -> String {
+//     "List of topics".to_string()
+// }
 
 #[post("/", data = "<data>")]
-pub fn create_topic_rt(data: rocket::form::Result<Form<NewTopic>>) -> Template {
+pub fn create_topic_rt(data: rocket::form::Result<Form<NewTopic>>, user: User) -> Template {
     let new_topic = match data {
         Err(errors) => {
             let errs: Vec<String> = errors
@@ -31,7 +31,7 @@ pub fn create_topic_rt(data: rocket::form::Result<Form<NewTopic>>) -> Template {
         Ok(d) => NewTopic {
             created_at: 0, // TODO
             board_id: d.board_id,
-            user_id: 0, //TODO
+            user_id: user.id,
             is_locked: d.is_locked,
             is_sticky: d.is_sticky,
             subject: d.subject.to_string(),

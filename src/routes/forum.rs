@@ -85,10 +85,10 @@ use crate::User;
 #[get("/")]
 pub fn forum_list_rt(user: Option<User>) -> Template {
 
-    let user_name: Option<String> = match user {
-        Some(u) => Some(u.name.to_string()),
-        None => None
-    };
+    // let user_name: Option<String> = match user {
+    //     Some(u) => Some(u),
+    //     None => None
+    // };
 
 
     Template::render(
@@ -100,7 +100,7 @@ pub fn forum_list_rt(user: Option<User>) -> Template {
                 Ok(b) => json!({
                     "boards": b,
                     "forums": f,
-                    "user": user_name
+                    "user": user
                 }),
             },
         },

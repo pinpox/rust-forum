@@ -9,21 +9,37 @@ use crate::schema::posts;
 #[diesel(belongs_to(Topic))]
 pub struct Post {
     pub id: i32,
-    pub user_id: i32,
+    pub user_id: String,
     pub content: String,
     pub topic_id: i32,
     pub created_at: i32,
 }
 
-#[derive(Debug, Insertable, FromForm)]
+#[derive(Debug, Insertable)]
 #[diesel(table_name = posts)]
 pub struct NewPost {
-    pub user_id: i32,
+    pub user_id: String,
     pub content: String,
     pub topic_id: i32,
-    #[field(default = 0)]
+    // #[field(default = 0)]
     pub created_at: i32,
 }
+
+
+#[derive(Debug, FromForm)]
+pub struct NewPostRequest {
+    pub content: String,
+    pub topic_id: i32,
+}
+
+// #[derive(Debug, FromForm)]
+// pub struct PostDisplay {
+//     pub topic_id: i32,
+//     pub topic_name: String,
+//     pub user: User,
+//     pub created_at: i32
+// }
+
 
 pub fn create_post(post: NewPost) -> Result<usize, diesel::result::Error> {
     println!("Creating post: {:?}", post);

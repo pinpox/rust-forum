@@ -10,7 +10,7 @@ use crate::schema::topics;
 pub struct Topic {
     pub id: i32,
     pub board_id: i32,
-    pub user_id: i32,
+    pub user_id: String,
     pub subject: String,
     pub content: String,
     pub is_sticky: bool,
@@ -23,7 +23,7 @@ pub struct Topic {
 #[diesel(table_name = topics)]
 pub struct NewTopic {
     pub board_id: i32,
-    pub user_id: i32,
+    pub user_id: String,
     pub subject: String,
     pub content: String,
     #[field(default = false)]

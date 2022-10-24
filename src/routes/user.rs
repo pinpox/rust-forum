@@ -63,8 +63,23 @@ pub fn edit_user_rt(user: User) -> Template {
 }
 
 #[get("/<id>")]
-pub fn info_user_rt(id: String) -> String {
-    format!("Info for user {}", id)
+pub fn info_user_rt(id: String) -> Template {
+    Template::render(
+        "user",
+        match get_by_id(&id) {
+            Err(e) => json!({"message": e.to_string()}),
+            // Ok(u) => match get_user_topics(id) {
+            // Err(e) => json!({"message": e.to_string()}),
+            // Ok(f) => match get_users() {
+            // Err(e) => json!({"message": e.to_string()}),
+            Ok(u) => json!({
+                // "posts": p,
+                "user": u
+            }),
+            // },
+        },
+        // }
+    )
 }
 
 #[post("/update/<id>")]

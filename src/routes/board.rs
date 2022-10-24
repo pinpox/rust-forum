@@ -2,6 +2,7 @@ use crate::models::board::*;
 use crate::models::forum::*;
 use crate::models::topic::*;
 
+use crate::models::user::User;
 
 use rocket_dyn_templates::Template;
 use serde_json::json;
@@ -9,7 +10,7 @@ use serde_json::json;
 use rocket::form::Form;
 
 #[post("/", data = "<data>")]
-pub fn create_board_rt(data: rocket::form::Result<Form<NewBoard>>) -> Template {
+pub fn create_board_rt(data: rocket::form::Result<Form<NewBoard>>, user: User) -> Template {
     let new_board = match data {
         Err(errors) => {
             let errs: Vec<String> = errors
@@ -56,7 +57,7 @@ pub fn new_board_rt() -> Template {
 }
 
 #[get("/<id>")]
-pub fn info_board_rt(id: i32) -> Template {
+pub fn info_board_rt(id: i32, user: Option<User>) -> Template {
     Template::render(
         "board",
         match get_board_by_id(id) {
@@ -66,7 +67,8 @@ pub fn info_board_rt(id: i32) -> Template {
                 Ok(t) => {
                     json!({
                         "topics": t,
-                        "board": b
+                        "board": b,
+                        "user": user
                     })
                 }
             },
