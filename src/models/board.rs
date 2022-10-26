@@ -18,16 +18,23 @@ pub struct Board {
     pub is_locked: bool,
 }
 
-#[derive(Debug, Insertable, FromForm)]
+#[derive(Debug, Insertable)]
 #[diesel(table_name = boards)]
 pub struct NewBoard {
     pub forum_id: i32,
     pub name: String,
     pub description: String,
-    #[field(default = 0)]
     pub updated_at: i32,
-    #[field(default = 0)]
     pub position: i32,
+    pub is_locked: bool,
+}
+
+#[derive(Debug, FromForm)]
+pub struct NewBoardRequest {
+    pub forum_id: i32,
+    pub name: String,
+    pub description: String,
+    pub position: Option<String>,
     #[field(default = false)]
     pub is_locked: bool,
 }

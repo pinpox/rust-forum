@@ -19,19 +19,28 @@ pub struct Topic {
 
 }
 
-#[derive(Debug, Insertable, FromForm)]
+#[derive(Debug, Insertable)]
 #[diesel(table_name = topics)]
 pub struct NewTopic {
     pub board_id: i32,
     pub user_id: String,
     pub subject: String,
     pub content: String,
+    pub is_locked: bool,
+    pub is_sticky: bool,
+    pub created_at: i32,
+}
+
+
+#[derive(Debug, FromForm)]
+pub struct NewTopicRequest {
+    pub board_id: i32,
+    pub subject: String,
+    pub content: String,
     #[field(default = false)]
     pub is_locked: bool,
     #[field(default = false)]
     pub is_sticky: bool,
-    #[field(default = 0)]
-    pub created_at: i32,
 }
 
 pub fn create_topic(topic: NewTopic) -> Result<usize, diesel::result::Error> {

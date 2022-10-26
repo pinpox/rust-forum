@@ -81,8 +81,8 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
                 // routes::user::new_user_rt,
                 routes::user::complete_user_rt,
                 routes::user::info_user_rt,
-                routes::user::update_user_rt,
-                routes::user::delete_user_rt
+                // routes::user::update_user_rt,
+                // routes::user::delete_user_rt
             ],
         )
         .mount(
@@ -103,8 +103,8 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
                 routes::board::new_board_rt,
                 routes::board::create_board_rt,
                 routes::board::info_board_rt,
-                routes::board::update_board_rt,
-                routes::board::delete_board_rt
+                // routes::board::update_board_rt,
+                // routes::board::delete_board_rt
             ],
         )
         .mount(
@@ -124,8 +124,8 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
                 routes::post::post_list_rt,
                 routes::post::create_post_rt,
                 // routes::post::info_post_rt,
-                routes::post::update_post_rt,
-                routes::post::delete_post_rt
+                // routes::post::update_post_rt,
+                // routes::post::delete_post_rt
             ],
         )
         .mount("/admin", routes![routes::admin::manage_rt])

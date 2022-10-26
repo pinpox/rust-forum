@@ -1,16 +1,21 @@
+use crate::models::board::*;
+use crate::models::forum::*;
+use crate::models::user::*;
+use crate::routes::other::*;
+
 use rocket::form::Form;
 use rocket::request::FlashMessage;
 use rocket::response::{Flash, Redirect};
 use rocket_dyn_templates::Template;
-extern crate serde_json;
 use serde_json::json;
 
-use crate::models::board::*;
-use crate::models::forum::*;
-
+// use crate::User;
 //TODO show error on invalid inputs
 #[post("/", data = "<data>")]
-pub fn create_forum_rt(data: rocket::form::Result<Form<NewForum>>) -> Flash<Redirect> {
+pub fn create_forum_rt(
+    data: rocket::form::Result<Form<NewForumRequest>>,
+    _user: AdminUser,
+) -> Flash<Redirect> {
     let new_forum = match data {
         Err(errors) => {
             let errs: Vec<String> = errors
@@ -18,24 +23,29 @@ pub fn create_forum_rt(data: rocket::form::Result<Form<NewForum>>) -> Flash<Redi
                 .map(|e| format!("{}", e.name.as_ref().expect(", ")))
                 .collect();
             return Flash::error(
-                Redirect::to(uri!("/forums/new")),
+                Redirect::to(uri!("/forums", new_forum_rt)),
                 format!("Error creating forum: {}", errs.join(", ")),
             );
         }
         Ok(d) => NewForum {
             name: d.name.to_string(),
-            position: d.position,
+            position: d
+                .position
+                .to_owned()
+                .unwrap_or_default()
+                .parse::<i32>()
+                .unwrap_or_default(),
             is_locked: d.is_locked,
         },
     };
 
     match create_forum(new_forum) {
         Ok(_n) => Flash::success(
-            Redirect::to(uri!("/forums/new")),
+            Redirect::to(uri!("/forums", new_forum_rt)),
             "Forum created succcessfully!",
         ),
         Err(e) => Flash::error(
-            Redirect::to(uri!("/forums/new")),
+            Redirect::to(uri!("/forums", new_forum_rt)),
             format!("Error creating forum: {}", e),
         ),
     }
@@ -50,13 +60,13 @@ pub fn new_forum_rt(flash: Option<FlashMessage>) -> Template {
 pub fn info_forum_rt(id: i32) -> Result<Template, Flash<Redirect>> {
     match get_forum_by_id(id) {
         Err(e) => Err(Flash::error(
-            Redirect::to(uri!("/error")),
+            Redirect::to(uri!(error_rt)),
             format!("Error creating forum: {}", e),
         )),
 
         Ok(f) => match get_forum_boards(f.id) {
             Err(e) => Err(Flash::error(
-                Redirect::to(uri!("/error")),
+                Redirect::to(uri!(error_rt)),
                 format!("Error creating forum: {}", e),
             )),
 
@@ -80,17 +90,8 @@ pub fn delete_forum_rt(id: String) -> String {
     format!("Delete forum {}", id)
 }
 
-use crate::User;
-
 #[get("/")]
 pub fn forum_list_rt(user: Option<User>) -> Template {
-
-    // let user_name: Option<String> = match user {
-    //     Some(u) => Some(u),
-    //     None => None
-    // };
-
-
     Template::render(
         "forums",
         match get_forums() {

@@ -1,13 +1,13 @@
-use rocket::form::Form;
-// use rocket::request::FlashMessage;
-use rocket::response::{Flash, Redirect};
-use rocket::*;
-use rocket_dyn_templates::Template;
-// use rocket_dyn_templates::Template;
-
 use crate::models::post::*;
 use crate::models::user::User;
-extern crate serde_json;
+use crate::routes::other::*;
+use crate::routes::topic::*;
+
+use rocket::form::Form;
+use rocket::response::{Flash, Redirect};
+// use rocket::*;
+use rocket_dyn_templates::Template;
+
 use serde_json::json;
 
 #[get("/")]
@@ -23,26 +23,24 @@ pub fn post_list_rt(user: Option<User>) -> Template {
                 "user": user
             }),
             // },
-        },
-    )
+        })
 }
 
 #[post("/new", data = "<data>")]
 pub fn create_post_rt(
     data: rocket::form::Result<Form<NewPostRequest>>,
     user: User,
-) -> Flash<Redirect> {
+    ) -> Flash<Redirect> {
     let new_post = match data {
         Err(errors) => {
-            println!("err 1");
             let errs: Vec<String> = errors
                 .iter()
                 .map(|e| format!("{}", e.name.as_ref().expect(", ")))
                 .collect();
             return Flash::error(
-                Redirect::to(uri!("/error")),
+                Redirect::to(uri!(error_rt)),
                 format!("Error creating post: {}", errs.join(", ")),
-            );
+                );
         }
         Ok(d) => NewPost {
             user_id: user.id,
@@ -52,31 +50,22 @@ pub fn create_post_rt(
         },
     };
 
-    println!("CREATING");
-
     let post_topic = new_post.topic_id;
 
     match create_post(new_post) {
         Ok(..) => Flash::success(
-            Redirect::to(uri!(
-                "/topics",
-                crate::routes::topic::info_topic_rt(post_topic)
-            )),
-            format!("Post created!"),
-        ),
+            Redirect::to(uri!( "/topics", info_topic_rt(post_topic))), format!("Post created!")),
         Err(e) => Flash::error(
-            Redirect::to(uri!("/error")),
-            format!("Error creating post: {}", e),
-        ),
+            Redirect::to(uri!(error_rt)), format!("Error creating post: {}", e)),
     }
 }
 
-#[post("/<id>")]
-pub fn update_post_rt(id: String) -> String {
-    format!("Update info for post {}", id)
-}
+// #[post("/<id>")]
+// pub fn update_post_rt(id: String) -> String {
+//     format!("Update info for post {}", id)
+// }
 
-#[delete("/<id>")]
-pub fn delete_post_rt(id: String) -> String {
-    format!("Delete post {}", id)
-}
+// #[delete("/<id>")]
+// pub fn delete_post_rt(id: String) -> String {
+//     format!("Delete post {}", id)
+// }

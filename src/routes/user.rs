@@ -1,4 +1,5 @@
 // use rocket::*;
+use crate::routes::other::*;
 
 use rocket::{get, post};
 
@@ -30,11 +31,10 @@ pub fn complete_user_rt(
                 .iter()
                 .map(|e| format!("{}", e.name.as_ref().expect(", ")))
                 .collect();
-            panic!();
-            // return Flash::error(
-            //     Redirect::to(uri!("/TODO/new")),
-            //     format!("Error creating forum: {}", errs.join(", ")),
-            // );
+            return Flash::error(
+                Redirect::to(uri!(error_rt)),
+                format!("Error creating forum: {}", errs.join(", ")),
+            );
         }
 
         Ok(d) => {
@@ -51,7 +51,7 @@ pub fn complete_user_rt(
     match create_or_update_user(new_user) {
         Ok(_n) => Flash::success(Redirect::to(uri!("/forums")), "User updated succcessfully!"),
         Err(e) => Flash::error(
-            Redirect::to(uri!("/TODO")),
+            Redirect::to(uri!(error_rt)),
             format!("Error creating user: {}", e),
         ),
     }
@@ -82,12 +82,12 @@ pub fn info_user_rt(id: String) -> Template {
     )
 }
 
-#[post("/update/<id>")]
-pub fn update_user_rt(id: String) -> String {
-    format!("Update info for user {}", id)
-}
+// #[post("/update/<id>")]
+// pub fn update_user_rt(id: String) -> String {
+//     format!("Update info for user {}", id)
+// }
 
-#[get("/delete/<id>")]
-pub fn delete_user_rt(id: String) -> String {
-    format!("Delete user {}", id)
-}
+// #[get("/delete/<id>")]
+// pub fn delete_user_rt(id: String) -> String {
+//     format!("Delete user {}", id)
+// }

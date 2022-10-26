@@ -4,21 +4,28 @@ use serde::{Deserialize, Serialize};
 use crate::db::establish_connection;
 use crate::schema::forums;
 
-#[derive(Debug, Insertable, FromForm)]
-#[diesel(table_name = forums)]
-pub struct NewForum {
-    #[field(validate = len(2..))]
-    pub name: String,
-    #[field(default = 0)]
-    pub position: i32,
-    pub is_locked: bool,
-}
 
 #[derive(Debug, Queryable, AsChangeset, Serialize, Deserialize)]
 pub struct Forum {
     pub id: i32,
     pub name: String,
     pub position: i32,
+    pub is_locked: bool,
+}
+
+#[derive(Debug, Insertable)]
+#[diesel(table_name = forums)]
+pub struct NewForum {
+    pub name: String,
+    pub position: i32,
+    pub is_locked: bool,
+}
+
+#[derive(Debug, FromForm)]
+pub struct NewForumRequest {
+    #[field(validate = len(2..))]
+    pub name: String,
+    pub position: Option<String>,
     pub is_locked: bool,
 }
 
