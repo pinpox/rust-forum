@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use diesel::sql_query;
 
 // use serde::{Deserialize, Serialize};
 
@@ -26,7 +27,9 @@ pub struct UserSubject {
     pub subject: String,
 }
 
-#[derive(Debug, Queryable, Identifiable, AsChangeset, Serialize, Deserialize, Insertable)]
+#[derive(
+    Debug, Queryable, Identifiable, AsChangeset, Serialize, Deserialize, Insertable, QueryableByName,
+)]
 #[diesel(table_name = users)]
 pub struct User {
     pub id: String,
@@ -44,7 +47,7 @@ pub struct UserUpdateData {
     pub picture: Option<String>,
 }
 
-#[derive(Debug , FromForm, Serialize)]
+#[derive(Debug, FromForm, Serialize)]
 pub struct AdminUser {
     pub id: String,
     pub name: String,
@@ -77,19 +80,15 @@ pub fn get_by_id(u_id: &String) -> Result<User, diesel::result::Error> {
 
 // Selects all users that participate in a topic (creator + repliers)
 pub fn get_topic_users(t_id: i32) -> Result<Vec<User>, diesel::result::Error> {
-    use crate::schema::users::dsl::*;
+
     let mut connection = establish_connection();
+    use diesel::sql_types::Integer;
 
-    //TODO!!!
-    //Don't return all users, just the ones who's ID is one of:
-    // - topic.user_id
-    // - SELECT user_id FROM posts WHERE topic_id = topic.user_id
-
-    // let distinct_user_ids = users.select(user_id).distinct()
-    // .filter(removed.eq(false))
-    // .load::<String>(&connection)?;
-
-    users.load::<User>(&mut connection)
+    // TODO use diesel query DSL instead of raw sql_query
+    sql_query("select * from users where id in (select user_id from topics where id = ? union select user_id from posts where topic_id = ?)")
+     .bind::<Integer, _>(t_id)
+     .bind::<Integer, _>(t_id)
+     .load::<User>(&mut connection)
 }
 
 pub async fn user_from_request(request: &Request<'_>) -> Option<User> {
