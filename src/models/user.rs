@@ -1,5 +1,6 @@
 use diesel::prelude::*;
 use diesel::sql_query;
+use diesel::sql_types::Integer;
 
 // use serde::{Deserialize, Serialize};
 
@@ -80,11 +81,10 @@ pub fn get_by_id(u_id: &String) -> Result<User, diesel::result::Error> {
 
 // Selects all users that participate in a topic (creator + repliers)
 pub fn get_topic_users(t_id: i32) -> Result<Vec<User>, diesel::result::Error> {
-
     let mut connection = establish_connection();
-    use diesel::sql_types::Integer;
 
     // TODO use diesel query DSL instead of raw sql_query
+    //This is currently not possible due to: https://github.com/diesel-rs/diesel/issues/3380
     sql_query("select * from users where id in (select user_id from topics where id = ? union select user_id from posts where topic_id = ?)")
      .bind::<Integer, _>(t_id)
      .bind::<Integer, _>(t_id)
