@@ -23,14 +23,15 @@ pub fn post_list_rt(user: Option<User>) -> Template {
                 "user": user
             }),
             // },
-        })
+        },
+    )
 }
 
 #[post("/new", data = "<data>")]
 pub fn create_post_rt(
     data: rocket::form::Result<Form<NewPostRequest>>,
     user: User,
-    ) -> Flash<Redirect> {
+) -> Flash<Redirect> {
     let new_post = match data {
         Err(errors) => {
             let errs: Vec<String> = errors
@@ -40,7 +41,7 @@ pub fn create_post_rt(
             return Flash::error(
                 Redirect::to(uri!(error_rt)),
                 format!("Error creating post: {}", errs.join(", ")),
-                );
+            );
         }
         Ok(d) => NewPost {
             user_id: user.id,
@@ -54,9 +55,13 @@ pub fn create_post_rt(
 
     match create_post(new_post) {
         Ok(..) => Flash::success(
-            Redirect::to(uri!( "/topics", info_topic_rt(post_topic))), format!("Post created!")),
+            Redirect::to(uri!("/topics", info_topic_rt(post_topic))),
+            format!("Post created!"),
+        ),
         Err(e) => Flash::error(
-            Redirect::to(uri!(error_rt)), format!("Error creating post: {}", e)),
+            Redirect::to(uri!(error_rt)),
+            format!("Error creating post: {}", e),
+        ),
     }
 }
 

@@ -107,9 +107,12 @@ pub async fn user_from_request(request: &Request<'_>) -> Option<User> {
             if hatch.validate_access_token(token_cookie.value()) {
                 let subject = cookies.get_private("sub").unwrap().value().to_string();
 
-                info_!("Knonw User '{}' logged in!", &subject);
+                info_!("Known User '{}' logged in!", &subject);
                 return match crate::models::user::get_by_id(&subject) {
-                    Ok(u) => Some(u),
+                    Ok(u) => {
+                        info_!("found user with name: {}", u.name);
+                        Some(u)
+                    },
                     Err(..) => None,
                 };
             }

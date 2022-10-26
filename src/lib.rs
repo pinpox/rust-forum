@@ -56,12 +56,41 @@ pub fn index_auth_anon() -> Redirect {
     info_!("Anonymous user requested / -> redirecting to /authenticate");
     Redirect::to("/authenticate")
 }
+use rocket_dyn_templates::tera::{try_get_value, Result};
+use serde_json::value::{to_value, Value};
+use std::collections::HashMap;
+
+use comrak::{markdown_to_html, ComrakOptions};
+
+pub fn markdown_filter(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
+
+    let s = try_get_value!("markdown_filter", "value", String, value);
+    let outstring = markdown_to_html(&s, &ComrakOptions::default());
+    Ok(to_value(&outstring).unwrap())
+}
+
+// pub fn markdown_filter<E>(value: Value, _: HashMap<String, Value>) -> Result<Value, E> {
+//     let s = "";
+//     Ok(to_value(1))
+// }
+
+// &'a serde_json::Value, &'b HashMap<std::string::String, serde_json::Value>
+// pub fn markdown_filter(value: User, map: HashMap<String, serde_json::Value>) -> String {
+//     "test".to_string()
+
+//     // let s = try_get_value!("upper", "value", String, value);
+//     // Ok(to_value(markdown::to_html(s.as_str())))
+// }
 
 #[launch]
 pub fn rocket_builder() -> rocket::Rocket<Build> {
     rocket::build()
         .register("/", catchers![routes::other::not_found])
-        .attach(Template::fairing())
+        .attach(Template::custom(|engines| {
+            engines
+                .tera
+                .register_filter("markdown", markdown_filter)
+        }))
         .mount(
             "/",
             routes![

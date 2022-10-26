@@ -13,50 +13,52 @@
 	</thead>
 	<tbody>
 		{% set user_map = users | group_by(attribute="id") %}
-		{% set user = user_map[topic.user_id][0] %}
+		{% set post_user = user_map[topic.user_id][0] %}
 		<tr>
 			<td class="col-author center">
-				<a href="/users/{{user.id}}">{{user.name}}</a>
-				<p><img src="{{user.picture}}" height="80" width="80"/></p>
+				<a href="/users/{{post_user.id}}">{{post_user.name}}</a>
+				<p><img src="{{post_user.picture}}" height="80" width="80"/></p>
 			</td>
 
 			<td colspan="grow">
 				<div class="posted"> Posted {{topic.created_at}} <hr/> </div>
-				<div><p>{{topic.content}}</p></div>
+				<div><p>{{topic.content | markdown | safe}}</p></div>
 				<hr>
 				<div class="signature">
-					{{user.about}}
+					{{post_user.about}}
 				</div>
 			</td>
 		</tr>
 
+
 		{% for post in posts %}
-		{% set user = user_map[post.user_id][0] %}
+		{% set post_user = user_map[post.user_id][0] %}
 		<tr>
 			<td class="col-author center">
-				<a href="/users/{{user.id}}">{{user.name}}</a>
-				<p><img src="{{user.picture}}" height="80" width="80"/></p>
+				<a href="/users/{{post_user.id}}">{{post_user.name}}</a>
+				<p><img src="{{post_user.picture}}" height="80" width="80"/></p>
 			</td>
 
 			<td>
 				<div class="posted"> Posted {{post.created_at}} <hr/> </div>
-				<div><p>{{post.content}}</p></div>
+				<div><p>{{post.content | markdown | safe }}</p></div>
 				<hr>
 				<div class="signature">
-					{{user.about}}
+					{{post_user.about}}
 				</div>
 			</td>
 		</tr>
 		{% endfor %}
 	</tbody>
 </table>
-
-    <form action="/posts/new" method="post">
-		<input type="hidden" name="topic_id" value="{{topic.id}}">
-        <div class="field">
-            <label for="content">Reply to this topic</label>
-            <textarea name="content" id="content" style="height: 150px;"></textarea>
-        </div>
-        <input type="submit" value="Reply">
-    </form>
+{% if user %}
+<form action="/posts/new" method="post">
+	<input type="hidden" name="topic_id" value="{{topic.id}}">
+	<div class="field">
+		<!-- <label for="content">Reply to this topic as {{user.name}}</label> -->
+		<textarea name="content" id="content" placeholder="Reply to this topic as {{user.name}}" style="height: 150px;"></textarea>
+	</div>
+	<input type="submit" value="Reply">
+</form>
+{% endif %}
 {% endblock content %}

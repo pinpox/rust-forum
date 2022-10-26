@@ -58,7 +58,10 @@ pub fn create_topic_rt(
 }
 
 #[get("/new")]
-pub fn new_topic_rt(flash: Option<FlashMessage>) -> Result<Template, Flash<Redirect>> {
+pub fn new_topic_rt(
+    flash: Option<FlashMessage>,
+    user: Option<User>,
+) -> Result<Template, Flash<Redirect>> {
     match get_boards() {
         Err(e) => Err(Flash::error(
             Redirect::to(uri!(error_rt)),
@@ -66,7 +69,7 @@ pub fn new_topic_rt(flash: Option<FlashMessage>) -> Result<Template, Flash<Redir
         )),
         Ok(b) => Ok(Template::render(
             "topic-new",
-            json!({ "boards": b, "flash": flash, }),
+            json!({ "boards": b, "flash": flash,"user": user }),
         )),
     }
 }
@@ -76,7 +79,10 @@ pub fn new_topic_rt(flash: Option<FlashMessage>) -> Result<Template, Flash<Redir
 // }
 
 #[get("/<id>")]
-pub fn info_topic_rt(id: i32) -> Result<Template, Flash<Redirect>> {
+pub fn info_topic_rt(id: i32, user: Option<User>) -> Result<Template, Flash<Redirect>> {
+
+    println!("USER REQUSETED TOPIC {:#?}", user);
+
     match get_topic_by_id(id) {
         Err(e) => Err(Flash::error(
             Redirect::to(uri!(error_rt)),
@@ -98,7 +104,8 @@ pub fn info_topic_rt(id: i32) -> Result<Template, Flash<Redirect>> {
                     json!({
                         "posts": p,
                         "topic": t,
-                        "users": u
+                        "users": u,
+                        "user": user
                     }),
                 )),
             },
