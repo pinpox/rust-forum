@@ -1,6 +1,7 @@
 use rocket_dyn_templates::Template;
 use rocket::request::FlashMessage;
 use serde_json::json;
+use rocket::Request;
 
 #[get("/error")]
 pub fn error_rt( flash: Option<FlashMessage>) -> Template {
@@ -11,6 +12,12 @@ pub fn error_rt( flash: Option<FlashMessage>) -> Template {
 // pub fn not_parsable(req: &Request) {
 //     println!("{:#?}", req);
 // }
+//
+//
+#[catch(default)]
+pub fn fallback(req: &Request) {
+    println!("{:#?}", req);
+}
 
 #[catch(404)]
 pub fn not_found() -> Template {
@@ -18,5 +25,3 @@ pub fn not_found() -> Template {
         "header": "Not found",
     }))
 }
-
-

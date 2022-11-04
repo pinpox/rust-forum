@@ -28,6 +28,15 @@ use rocket_airlock::Airlock;
 use crate::models::user::{User, UserSubject};
 use serde_json::json;
 
+
+use rocket_dyn_templates::tera::{try_get_value, Result};
+use serde_json::value::{to_value, Value};
+use std::collections::HashMap;
+
+// For code syntax highlighting
+// use comrak::{markdown_to_html_with_plugins, plugins::syntect::SyntectAdapter, ComrakPlugins};
+use comrak::{markdown_to_html, ComrakOptions};
+
 mod hatch;
 
 #[get("/login")]
@@ -56,16 +65,18 @@ pub fn index_auth_anon() -> Redirect {
     info_!("Anonymous user requested / -> redirecting to /authenticate");
     Redirect::to("/authenticate")
 }
-use rocket_dyn_templates::tera::{try_get_value, Result};
-use serde_json::value::{to_value, Value};
-use std::collections::HashMap;
-
-use comrak::{markdown_to_html, ComrakOptions};
 
 pub fn markdown_filter(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
-
     let s = try_get_value!("markdown_filter", "value", String, value);
+
+    // To enable code syntax highlighting (slow)
+    // let adapter = SyntectAdapter::new("base16-ocean.dark");
+    // let mut plugins = ComrakPlugins::default();
+    // plugins.render.codefence_syntax_highlighter = Some(&adapter);
+    // let outstring = markdown_to_html_with_plugins(&s, &ComrakOptions::default(), &plugins);
+
     let outstring = markdown_to_html(&s, &ComrakOptions::default());
+
     Ok(to_value(&outstring).unwrap())
 }
 
@@ -87,9 +98,7 @@ pub fn rocket_builder() -> rocket::Rocket<Build> {
     rocket::build()
         .register("/", catchers![routes::other::not_found])
         .attach(Template::custom(|engines| {
-            engines
-                .tera
-                .register_filter("markdown", markdown_filter)
+            engines.tera.register_filter("markdown", markdown_filter)
         }))
         .mount(
             "/",

@@ -21,6 +21,8 @@ rocket_airlock = "0.3.0-rc.1"
 openidconnect = "2.3.2"
 anyhow = "1.0.66"
 comrak = "0.14.0"
+lazy_static = "1.4.0"
+markdown = "0.3.0"
 
 [dependencies.rocket_dyn_templates]
 version = "0.1.0-rc.2"
