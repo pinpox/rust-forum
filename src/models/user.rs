@@ -43,8 +43,11 @@ pub struct User {
 
 #[derive(Debug, FromForm)]
 pub struct UserUpdateData {
+    #[field(validate = len(3..10).or_else(msg!("Name should be 3-10 characters")))]
     pub name: String,
+    #[field(validate = len(0..100).or_else(msg!("About is too long (>200)")))]
     pub about: Option<String>,
+    #[field(validate = len(0..100).or_else(msg!("Picture URL is too long")))]
     pub picture: Option<String>,
 }
 
@@ -72,6 +75,7 @@ pub struct AdminUser {
 //     pub position: i32,
 //     pub is_locked: bool,
 // }
+//
 
 pub fn get_by_id(u_id: &String) -> Result<User, diesel::result::Error> {
     use crate::schema::users::dsl::*;

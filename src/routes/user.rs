@@ -18,8 +18,8 @@ use rocket::form::Form;
 // pub fn new_user_rt(flash: Option<FlashMessage>) -> Template {
 //     Template::render("forum-new", json!({ "flash": flash }))
 // }
+//
 
-//TODO show error on invalid inputs
 #[post("/complete", data = "<data>")]
 pub fn complete_user_rt(
     subject: UserSubject,
@@ -27,13 +27,24 @@ pub fn complete_user_rt(
 ) -> Flash<Redirect> {
     let new_user = match data {
         Err(errors) => {
-            let errs: Vec<String> = errors
-                .iter()
-                .map(|e| format!("{}", e.name.as_ref().expect(", ")))
-                .collect();
+
+            use rocket::form::error::ErrorKind;
+
+            let mut flash_errors: Vec<String> = vec![];
+            for e in errors.into_iter() {
+                if let ErrorKind::Validation(validation_err) = e.kind {
+                    flash_errors.push(validation_err.to_string())
+                } else {
+                    return Flash::error(
+                        Redirect::to(uri!(error_rt)),
+                        format!("Error creating user: {}", e),
+                    );
+                }
+            }
+
             return Flash::error(
                 Redirect::to(uri!(error_rt)),
-                format!("Error creating forum: {}", errs.join(", ")),
+                format!("Error creating user: {}", flash_errors.join(", ")),
             );
         }
 
